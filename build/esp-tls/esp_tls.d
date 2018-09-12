@@ -39,7 +39,7 @@ esp_tls.o: C:/msys32/home/vince/esp/esp-idf/components/esp-tls/esp_tls.c \
  C:/msys32/home/vince/esp/esp-idf/components/vfs/include/sys/ioctl.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/sys/select.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_task.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_system.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h \
@@ -236,7 +236,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/sys/select.h
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_task.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_system.h:
 

@@ -31,7 +31,7 @@ pm_esp32.o: C:/msys32/home/vince/esp/esp-idf/components/esp32/pm_esp32.c \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/sched.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_pm.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp32/pm.h \
@@ -162,7 +162,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

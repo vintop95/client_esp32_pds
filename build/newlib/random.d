@@ -18,7 +18,7 @@ random.o: C:/msys32/home/vince/esp/esp-idf/components/newlib/random.c \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/endian.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/param.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/reent.h \
@@ -109,7 +109,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/param.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h:
 

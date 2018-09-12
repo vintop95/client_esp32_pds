@@ -20,7 +20,7 @@ spiram.o: C:/msys32/home/vince/esp/esp-idf/components/esp32/spiram.c \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/syslimits.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/endian.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/param.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_attr.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_err.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdio.h \
@@ -136,7 +136,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/endian.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/param.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_attr.h:
 

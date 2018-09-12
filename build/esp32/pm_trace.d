@@ -1,6 +1,6 @@
 pm_trace.o: C:/msys32/home/vince/esp/esp-idf/components/esp32/pm_trace.c \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/pm_trace.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/driver/include/driver/gpio.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_err.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
@@ -44,7 +44,7 @@ pm_trace.o: C:/msys32/home/vince/esp/esp-idf/components/esp32/pm_trace.c \
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/pm_trace.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/driver/include/driver/gpio.h:
 

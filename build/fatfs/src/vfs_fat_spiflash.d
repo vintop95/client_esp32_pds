@@ -21,7 +21,7 @@ src/vfs_fat_spiflash.o: \
  C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/ets_sys.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/soc.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_assert.h \
@@ -166,7 +166,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/ets_sys.h:
 

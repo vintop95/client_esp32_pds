@@ -36,7 +36,7 @@ nghttp2/lib/nghttp2_hd.o: \
  C:/msys32/home/vince/esp/esp-idf/components/nghttp/nghttp2/lib/nghttp2_mem.h \
  C:/msys32/home/vince/esp/esp-idf/components/nghttp/nghttp2/lib/nghttp2_rcbuf.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/nghttp/nghttp2/lib/nghttp2_helper.h \
  C:/msys32/home/vince/esp/esp-idf/components/nghttp/nghttp2/lib/nghttp2_debug.h
@@ -113,7 +113,7 @@ C:/msys32/home/vince/esp/esp-idf/components/nghttp/nghttp2/lib/nghttp2_rcbuf.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

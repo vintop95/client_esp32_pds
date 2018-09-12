@@ -27,7 +27,7 @@ ulp_macro.o: C:/msys32/home/vince/esp/esp-idf/components/ulp/ulp_macro.c \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/ets_sys.h \
@@ -95,7 +95,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

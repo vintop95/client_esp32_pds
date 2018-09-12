@@ -25,7 +25,7 @@ lib/http_utils.o: \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/sched.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp_http_client/lib/include/http_utils.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/time.h
@@ -80,7 +80,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

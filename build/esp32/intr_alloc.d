@@ -1,6 +1,6 @@
 intr_alloc.o: \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/intr_alloc.c \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_default_types.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/features.h \
@@ -84,7 +84,7 @@ intr_alloc.o: \
  C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log.h \
  C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log_internal.h
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h:
 

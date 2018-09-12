@@ -1,6 +1,6 @@
 src/secure_boot_signatures.o: \
  C:/msys32/home/vince/esp/esp-idf/components/bootloader_support/src/secure_boot_signatures.c \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/bootloader_support/include_bootloader/bootloader_flash.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_default_types.h \
@@ -46,7 +46,7 @@ src/secure_boot_signatures.o: \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/sha.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_types.h
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/bootloader_support/include_bootloader/bootloader_flash.h:
 

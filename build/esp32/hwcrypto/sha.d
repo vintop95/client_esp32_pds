@@ -22,7 +22,7 @@ hwcrypto/sha.o: \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h \
  C:/msys32/home/vince/esp/esp-idf/components/wpa_supplicant/port/include/byteswap.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/alloca.h \
@@ -97,7 +97,7 @@ C:/msys32/home/vince/esp/esp-idf/components/wpa_supplicant/port/include/byteswap
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h:
 

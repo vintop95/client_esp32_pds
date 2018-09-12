@@ -24,7 +24,7 @@ wifi_os_adapter.o: \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
@@ -200,7 +200,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

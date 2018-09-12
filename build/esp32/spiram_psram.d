@@ -1,6 +1,6 @@
 spiram_psram.o: \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/spiram_psram.c \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/newlib.h \
@@ -76,7 +76,7 @@ spiram_psram.o: \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/spi_struct.h \
  C:/msys32/home/vince/esp/esp-idf/components/driver/include/driver/periph_ctrl.h
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
 

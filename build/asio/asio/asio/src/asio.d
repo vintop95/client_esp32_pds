@@ -3,7 +3,7 @@ asio/asio/src/asio.o: \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/impl/src.hpp \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/detail/config.hpp \
  C:/msys32/home/vince/esp/esp-idf/components/asio/port/include/esp_asio_config.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error.ipp \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/error.hpp \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/error_code.hpp \
@@ -325,7 +325,7 @@ C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/detail/c
 
 C:/msys32/home/vince/esp/esp-idf/components/asio/port/include/esp_asio_config.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/impl/error.ipp:
 

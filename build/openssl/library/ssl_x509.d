@@ -10,7 +10,7 @@ library/ssl_x509.o: \
  C:/msys32/home/vince/esp/esp-idf/components/openssl/include/internal/ssl_methods.h \
  C:/msys32/home/vince/esp/esp-idf/components/openssl/include/internal/ssl_dbg.h \
  C:/msys32/home/vince/esp/esp-idf/components/openssl/include/platform/ssl_opt.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/openssl/include/platform/ssl_port.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_types.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/cdefs.h \
@@ -67,7 +67,7 @@ C:/msys32/home/vince/esp/esp-idf/components/openssl/include/internal/ssl_dbg.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/openssl/include/platform/ssl_opt.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/openssl/include/platform/ssl_port.h:
 

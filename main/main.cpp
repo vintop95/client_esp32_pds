@@ -12,6 +12,8 @@
 #include "esp_event.h"
 #include "esp_event_loop.h"
 #include "nvs_flash.h"
+#include <iostream>
+#include <string.h>
 
 //VT: compilation switch in order to enable/disable
 //code for enabling connection to WIFI_SSID network
@@ -26,6 +28,12 @@
 #define	WIFI_CHANNEL_SWITCH_INTERVAL	(500)
 
 #define MAX_APs 20
+
+//VT: necessary in order to use c++
+extern "C" {
+	void app_main(void);
+}
+using namespace std;
 
 //static wifi_country_t wifi_country = {.cc="CN", .schan=1, .nchan=13, .policy=WIFI_COUNTRY_POLICY_AUTO};
 
@@ -55,6 +63,7 @@ static esp_err_t event_handler(void *ctx, system_event_t *event);
 static void wifi_sniffer_set_channel(uint8_t channel);
 static const char *wifi_sniffer_packet_type2str(wifi_promiscuous_pkt_type_t type);
 static void wifi_sniffer_packet_handler(void *buff, wifi_promiscuous_pkt_type_t type);
+
 
 
 //VT: Empty infinite task -> callback for xTaskCreate api function
@@ -118,12 +127,11 @@ wifi_init(void)
 
 
 	//VT: configure the wifi connection to connect to a wifi net
-	wifi_config_t wifi_config = {
-        .sta = {
-            .ssid = WIFI_SSID,
-            .password = WIFI_PASS,
-        },
-    };
+	wifi_config_t wifi_config = { };
+	strcpy((char *)wifi_config.sta.ssid, WIFI_SSID);
+	strcpy((char *)wifi_config.sta.password, WIFI_PASS);
+
+
 	ESP_ERROR_CHECK(esp_wifi_set_config(ESP_IF_WIFI_STA, &wifi_config));
 
     ESP_ERROR_CHECK( esp_wifi_start() );
@@ -203,20 +211,35 @@ wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
 
 // From auth_mode code to string
-static char* getAuthModeName(wifi_auth_mode_t auth_mode) {
-	char *names[] = {"OPEN", "WEP", "WPA PSK", "WPA2 PSK", "WPA WPA2 PSK", "MAX"};
-	return names[auth_mode];
+static const char* getAuthModeName(wifi_auth_mode_t auth_mode) {
+	switch(auth_mode){
+		case WIFI_AUTH_OPEN:
+			return "OPEN";
+		case WIFI_AUTH_WEP:
+			return "WEP";
+		case WIFI_AUTH_WPA_PSK:
+			return "WPA PSK";
+		case WIFI_AUTH_WPA2_PSK:
+			return "WPA2 PSK";
+		case WIFI_AUTH_WPA_WPA2_PSK:
+			return "WPA WPA2 PSK";
+		case WIFI_AUTH_MAX:
+			return "WIFI_AUTH_MAX";
+		default:
+			return "UNKNOWN";
+	}
 }
 
 void 
 wifi_scan(void){
 	// configure and run the scan process in blocking mode
-	wifi_scan_config_t scan_config = {
-		.ssid = 0,
-		.bssid = 0,
-		.channel = 0,
-        .show_hidden = true
-    };
+	wifi_scan_config_t scan_config = {  };
+
+	scan_config.ssid = 0;
+	scan_config.bssid = 0;
+	scan_config.channel = 0;
+	scan_config.show_hidden = true;
+
 	printf("Start scanning...");
 	ESP_ERROR_CHECK(esp_wifi_scan_start(&scan_config, true));
 	printf(" completed!\n");

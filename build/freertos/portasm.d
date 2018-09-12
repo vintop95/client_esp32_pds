@@ -12,7 +12,7 @@ portasm.o: C:/msys32/home/vince/esp/esp-idf/components/freertos/portasm.S \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/corebits.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/config/system.h \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/xtensa_context.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h \
@@ -45,7 +45,7 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/config/system.h
 
 C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/xtensa_config.h:
 

@@ -1,4 +1,4 @@
-main.o: D:/Progetti/esp32_pds/main/main.c \
+main.o: D:/Progetti/esp32_pds/main/main.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/reent.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h \
@@ -129,7 +129,9 @@ main.o: D:/Progetti/esp32_pds/main/main.c \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h \
  C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h \
- C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h
+ C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h
 
 C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
 
@@ -392,4 +394,8 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h:
 C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h:
-/d/Progetti/esp32_pds/main/./main.c:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
+/d/Progetti/esp32_pds/main/./main.cpp:

@@ -22,7 +22,7 @@ bt.o: C:/msys32/home/vince/esp/esp-idf/components/bt/bt.c \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/heap/include/esp_heap_caps.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h \
@@ -150,7 +150,7 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/heap/include/esp_heap_caps.h:
 

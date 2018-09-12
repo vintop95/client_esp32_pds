@@ -14,7 +14,7 @@ dport_panic_highint_hdl.o: \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/xtensa_context.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_panic.h \
- C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h \
+ D:/Progetti/esp32_pds/build/include/sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/soc.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/dport_reg.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/soc.h
@@ -47,7 +47,7 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frame
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_panic.h:
 
-C:/msys32/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/build/include/sdkconfig.h:
+D:/Progetti/esp32_pds/build/include/sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/soc.h:
 
