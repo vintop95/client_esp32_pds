@@ -1,4 +1,4 @@
-# Shortcuts for rapid compilation
+## Shortcuts for rapid compilation
 F4: flash app
 F5: build app
 F8: clean app
