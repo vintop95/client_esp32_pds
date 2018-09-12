@@ -130,8 +130,11 @@ main.o: D:/Progetti/esp32_pds/main/main.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h \
  C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h \
  C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h
+ D:/Progetti/esp32_pds/main/Sniffer.h D:/Progetti/esp32_pds/main/WiFi.h \
+ C:/msys32/home/vince/esp/esp-idf/components/mdns/include/mdns.h \
+ D:/Progetti/esp32_pds/main/FreeRTOS.h \
+ C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h \
+ D:/Progetti/esp32_pds/main/WiFiEventHandler.h
 
 C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
 
@@ -395,7 +398,15 @@ C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h:
 
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
+D:/Progetti/esp32_pds/main/Sniffer.h:
 
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
+D:/Progetti/esp32_pds/main/WiFi.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/mdns/include/mdns.h:
+
+D:/Progetti/esp32_pds/main/FreeRTOS.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h:
+
+D:/Progetti/esp32_pds/main/WiFiEventHandler.h:
 /d/Progetti/esp32_pds/main/./main.cpp:

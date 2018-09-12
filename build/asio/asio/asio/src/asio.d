@@ -114,8 +114,6 @@ asio/asio/src/asio.o: \
  c:\msys32\home\vince\esp\esp-idf\components\lwip\lwip\src\include\lwip\inet.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/net/if.h \
  C:/msys32/home/vince/esp/esp-idf/components/asio/port/include/esp_exception.h \
- C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log.h \
- C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log_internal.h \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/impl/execution_context.ipp \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/execution_context.hpp \
  C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/detail/noncopyable.hpp \
@@ -546,10 +544,6 @@ c:\msys32\home\vince\esp\esp-idf\components\lwip\lwip\src\include\lwip\inet.h:
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/net/if.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/asio/port/include/esp_exception.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log_internal.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/asio/asio/asio/include/asio/impl/execution_context.ipp:
 
