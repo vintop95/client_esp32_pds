@@ -1,20 +1,17 @@
-menu "Example Configuration"
+menu "WiFi Connection Configuration"
 
 config ESP_WIFI_SSID
     string "WiFi SSID"
-    default "xd"
     help
 	SSID (network name) for the example to connect to.
 
 config ESP_WIFI_PASSWORD
     string "WiFi Password"
-    default "ciao1234"
     help
 	WiFi password (WPA or WPA2) for the example to use.
 		
 config MAX_STA_CONN
     int "Maximal STA connections"
-    default 4
     help
 	Max number of the STA connects to AP.
 endmenu

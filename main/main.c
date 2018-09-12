@@ -17,8 +17,10 @@
 //code for enabling connection to WIFI_SSID network
 #define WIFI_ENABLE_CONNECT (1)
 //VT: needed to connect in a wifi network
-#define WIFI_SSID "xd"
-#define WIFI_PASS "ciao1234"
+//modify Knofig.projbuild to add config parameters like this
+//to set them use make menuconfig or modify sdkconfig
+#define WIFI_SSID CONFIG_ESP_WIFI_SSID
+#define WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
 
 #define	WIFI_CHANNEL_MAX		(13)
 #define	WIFI_CHANNEL_SWITCH_INTERVAL	(500)
@@ -27,9 +29,12 @@
 
 //static wifi_country_t wifi_country = {.cc="CN", .schan=1, .nchan=13, .policy=WIFI_COUNTRY_POLICY_AUTO};
 
-//VT: Event group, useful to handle wifi events
+//VT: Event group, useful to handle wifi events and signal when we are connected
 static EventGroupHandle_t wifi_event_group;
 const int CONNECTED_BIT = BIT0;
+
+//VT: name of the device appearing in the log
+static const char *TAG = "ESP_VT";
 
 typedef struct {
 	unsigned frame_ctrl:16;
@@ -259,7 +264,7 @@ app_main(void)
 {
 	/* setup */
 	wifi_init();
-	//printf("INITIALIZATION DONE.\n");
+	ESP_LOGI(TAG,"INITIALIZATION DONE.");
 
 	//VT: connect to WIFI_SSID network
 	#if WIFI_ENABLE_CONNECT

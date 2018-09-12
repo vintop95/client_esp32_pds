@@ -25,7 +25,7 @@ deps_config := \
 	/home/vince/esp/esp-idf/components/wear_levelling/Kconfig \
 	/home/vince/esp/esp-idf/components/bootloader/Kconfig.projbuild \
 	/home/vince/esp/esp-idf/components/esptool_py/Kconfig.projbuild \
-	/home/vince/esp/esp-idf/examples/wifi/getting_started/softAP/main/Kconfig.projbuild \
+	/d/Progetti/esp32_pds/main/Kconfig.projbuild \
 	/home/vince/esp/esp-idf/components/partition_table/Kconfig.projbuild \
 	/home/vince/esp/esp-idf/Kconfig
 
