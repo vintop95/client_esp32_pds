@@ -5,13 +5,8 @@ GeneralUtils.o: D:/Progetti/esp32_pds/main/GeneralUtils.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/features.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_err.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdio.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
  D:/Progetti/esp32_pds/build/include/sdkconfig.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/alloca.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/ets_sys.h \
@@ -118,19 +113,9 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_err.h:
 
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdio.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h:
-
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
 D:/Progetti/esp32_pds/build/include/sdkconfig.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/alloca.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

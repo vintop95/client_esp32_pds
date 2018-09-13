@@ -5,9 +5,6 @@ Socket.o: D:/Progetti/esp32_pds/main/Socket.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/soc.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/alloca.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/log/include/esp_log_internal.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h \
@@ -132,12 +129,6 @@ C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/soc.h:
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_assert.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/alloca.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h:
 

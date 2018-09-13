@@ -10,7 +10,7 @@ spi_flash_rom_patch.o: \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/gpio_pins.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/spi_flash.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/spi_reg.h \
- c:\msys32\home\vince\esp\esp-idf\examples\wifi\getting_started\softap\build\include\sdkconfig.h
+ d:\progetti\esp32_pds\build\include\sdkconfig.h
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/ets_sys.h:
 
@@ -32,5 +32,5 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/spi_flash.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/spi_reg.h:
 
-c:\msys32\home\vince\esp\esp-idf\examples\wifi\getting_started\softap\build\include\sdkconfig.h:
+d:\progetti\esp32_pds\build\include\sdkconfig.h:
 /home/vince/esp/esp-idf/components/spi_flash/./spi_flash_rom_patch.c:

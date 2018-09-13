@@ -20,7 +20,7 @@ esp32/rtc_clk_init.o: \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/dport_reg.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/dport_access.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_dport_access.h \
- c:\msys32\home\vince\esp\esp-idf\examples\wifi\getting_started\softap\build\include\sdkconfig.h \
+ d:\progetti\esp32_pds\build\include\sdkconfig.h \
  C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/uart_reg.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/xtruntime.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/config/core.h \
@@ -83,7 +83,7 @@ C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/dport_access.h
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_dport_access.h:
 
-c:\msys32\home\vince\esp\esp-idf\examples\wifi\getting_started\softap\build\include\sdkconfig.h:
+d:\progetti\esp32_pds\build\include\sdkconfig.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/soc/esp32/include/soc/uart_reg.h:
 

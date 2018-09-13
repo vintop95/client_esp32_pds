@@ -7,8 +7,6 @@ WiFi.o: D:/Progetti/esp32_pds/main/WiFi.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_wifi_types.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/queue.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_err.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdio.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/assert.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_interface.h \
@@ -126,10 +124,6 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_wifi_types.h:
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/queue.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_err.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdio.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/stdio.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/platform_include/assert.h:
 
