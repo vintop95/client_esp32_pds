@@ -15,12 +15,12 @@
 #include "nvs_flash.h"
 
 #include <string>
+#include <string.h>
 
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 
-#include "json.hpp"
-using json = nlohmann::json;
+#include <cJSON.h>
 
 class Server {
 private:

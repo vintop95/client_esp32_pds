@@ -20,7 +20,7 @@
 
 //VT: compilation switch in order to enable/disable
 //code for enabling connection to WIFI_SSID network
-#define WIFI_ENABLE_CONNECT (1)
+#define WIFI_ENABLE_CONNECT (0)
 //VT: needed to connect in a wifi network
 //modify Knofig.projbuild to add config parameters like this
 //to set them use make menuconfig or modify sdkconfig
@@ -184,27 +184,26 @@ void tcp_test(void){
 void app_main(void)
 {
 	/* setup */
-	WiFi wifi = WiFi();
-	ESP_LOGI(LOG_TAG,"INITIALIZATION DONE.");
+	WiFi wifi = WiFi(); //calling init inside the constructor (RAII)
+	wifi.setWifiEventHandler(new MyEventHandler());
 
+	ESP_LOGD(LOG_TAG,"INITIALIZATION DONE.");
 
 	//VT: connect to WIFI_SSID network
 	#if WIFI_ENABLE_CONNECT
-		wifi.setWifiEventHandler(new MyEventHandler());
 		wifi.connectAP(WIFI_SSID, WIFI_PASS);	
+		Server server;
+		server.connect(SERVER_IP, SERVER_PORT);
+		server.send("ciao");
 	#endif
-	
-	Server server;
-	server.connect(SERVER_IP, SERVER_PORT);
-	server.send("ciao");
-	server.close();
-	
 
 	//VT: SNIFFER MODE
-	//Sniffer sniffer;
-	//sniffer.init();
-	//wifi_sniffer_loop_channels();
+	Sniffer sniffer;
+	sniffer.init();
 
 	//VT: AP SCAN MODE
 	//wifi_scan();
+	#if WIFI_ENABLE_CONNECT
+		server.close();
+	#endif
 }

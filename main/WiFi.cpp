@@ -56,6 +56,7 @@ WiFi::WiFi()
 	m_initCalled        = false;
 	//m_pWifiEventHandler = new WiFiEventHandler();
 	m_apConnectionStatus       = UINT8_MAX;    // Are we connected to an access point?
+	init();
 } // WiFi
 
 
@@ -491,6 +492,20 @@ std::string WiFi::getStaSSID() {
 			ESP_LOGE(LOG_TAG, "esp_wifi_set_storage: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
 			abort();
 		}
+
+		//VT: aggiunto da me
+		errRc = ::esp_wifi_set_mode(WIFI_MODE_STA);
+		if (errRc != ESP_OK) {
+			ESP_LOGE(LOG_TAG, "esp_wifi_set_mode: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
+			abort();
+		}
+		//VT: aggiunto da me
+		errRc = ::esp_wifi_start();
+		if (errRc != ESP_OK) {
+			ESP_LOGE(LOG_TAG, "esp_wifi_start: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
+			abort();
+		}
+		printf("WiFi Inizializzato\n");
 	}
 	m_initCalled = true;
 } // init

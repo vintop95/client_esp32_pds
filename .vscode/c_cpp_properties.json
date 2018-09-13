@@ -17,7 +17,8 @@
                 "C:/msys32/home/vince/esp/esp-idf/components/coap/libcoap/examples/lwip",
                 "C:/msys32/home/vince/esp/esp-idf/components/lwip/port/esp32/include",
                 "C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/apps",
-                "C:/msys32/home/vince/esp/esp-idf/components/coap/libcoap/include/coap"
+                "C:/msys32/home/vince/esp/esp-idf/components/coap/libcoap/include/coap",
+                "C:/msys32/home/vince/esp/esp-idf/components/json/cJSON"
             ],
             "intelliSenseMode": "clang-x64",
             "defines": [

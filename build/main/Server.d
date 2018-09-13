@@ -131,12 +131,14 @@ Server.o: D:/Progetti/esp32_pds/main/Server.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h \
  C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h \
  C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/netdb.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/inet.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h \
- D:/Progetti/esp32_pds/main/json.hpp
+ C:/msys32/home/vince/esp/esp-idf/components/json/cJSON/cJSON.h
 
 D:/Progetti/esp32_pds/main/Server.h:
 
@@ -402,6 +404,10 @@ C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h:
 
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
+
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/netdb.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/inet.h:
@@ -412,5 +418,5 @@ C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h:
 
-D:/Progetti/esp32_pds/main/json.hpp:
+C:/msys32/home/vince/esp/esp-idf/components/json/cJSON/cJSON.h:
 /d/Progetti/esp32_pds/main/./Server.cpp:

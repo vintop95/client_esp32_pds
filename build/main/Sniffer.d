@@ -130,7 +130,9 @@ Sniffer.o: D:/Progetti/esp32_pds/main/Sniffer.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h \
  C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h \
- C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h
+ C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h
 
 D:/Progetti/esp32_pds/main/Sniffer.h:
 
@@ -395,4 +397,8 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h:
 C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
 /d/Progetti/esp32_pds/main/./Sniffer.cpp:
