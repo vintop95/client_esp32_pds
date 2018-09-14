@@ -505,7 +505,7 @@ std::string WiFi::getStaSSID() {
 			ESP_LOGE(LOG_TAG, "esp_wifi_start: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
 			abort();
 		}
-		printf("WiFi Inizializzato\n");
+		ESP_LOGD(LOG_TAG, "WiFi initialized correctly\n");
 	}
 	m_initCalled = true;
 } // init

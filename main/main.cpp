@@ -1,5 +1,8 @@
 /**
  * PDS Project - ESP32
+ * ESP_LOGI -> INFO
+ * ESP_LOGD -> DEBUG (NORMALLY DOESN'T PRINT)
+ * ESP_LOGE -> ERROR
  */
 #include <string.h>
 
@@ -17,8 +20,12 @@
 #include "WiFi.h"
 #include "Sniffer.h"
 #include "Server.h"
+#include "Sender.h"
 
-#include <cJSON.h>
+#include <iostream>
+#include <string>
+
+using namespace std;
 
 //VT: compilation switch in order to enable/disable
 //code for enabling connection to WIFI_SSID network
@@ -26,9 +33,14 @@
 //VT: needed to connect in a wifi network
 //modify Knofig.projbuild to add config parameters like this
 //to set them use make menuconfig or modify sdkconfig
+// #define WIFI_SSID "CUTRE-TPS" //CONFIG_ESP_WIFI_SSID
+// #define WIFI_PASS "Einaudi1935!" //CONFIG_ESP_WIFI_PASSWORD
+// #define SERVER_IP "172.16.139.251" //"192.168.43.5"
+
 #define WIFI_SSID CONFIG_ESP_WIFI_SSID
 #define WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
 #define SERVER_IP "192.168.43.5"
+
 #define SERVER_PORT 7856
 
 //VT: necessary in order to use c++
@@ -185,6 +197,9 @@ void tcp_test(void){
 
 void app_main(void)
 {
+	//PRINT DEBUG LOG
+	esp_log_level_set("*", ESP_LOG_DEBUG);
+
 	/* setup */
 	WiFi wifi = WiFi(); //calling init inside the constructor (RAII)
 	wifi.setWifiEventHandler(new MyEventHandler());
@@ -194,27 +209,17 @@ void app_main(void)
 	//VT: connect to WIFI_SSID network
 	#if WIFI_ENABLE_CONNECT
 		wifi.connectAP(WIFI_SSID, WIFI_PASS);	
+		//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
 
 		Server server;
 		server.connect(SERVER_IP, SERVER_PORT);
 
-
-		// create an empty structure (null)
 		json j;
-
-		// add a number that is stored as double (note the implicit conversion of j to an object)
 		j["pi"] = 3.141;
-
-		// add a Boolean that is stored as bool
-		j["happy"] = true;
-
-		// add a string that is stored as std::string
-		j["name"] = "Niels";
-
 		server.send(j);
 
-		
-		Sniffer sniffer(&server);
+		Sender sender(&server, 1000);
+		Sniffer sniffer(&sender);
 		sniffer.init();
 	#endif
 

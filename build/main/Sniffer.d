@@ -139,7 +139,7 @@ Sniffer.o: D:/Progetti/esp32_pds/main/Sniffer.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h \
- D:/Progetti/esp32_pds/main/json.hpp
+ D:/Progetti/esp32_pds/main/json.hpp D:/Progetti/esp32_pds/main/Sender.h
 
 D:/Progetti/esp32_pds/main/Sniffer.h:
 
@@ -422,4 +422,6 @@ C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h:
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h:
 
 D:/Progetti/esp32_pds/main/json.hpp:
+
+D:/Progetti/esp32_pds/main/Sender.h:
 /d/Progetti/esp32_pds/main/./Sniffer.cpp:

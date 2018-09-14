@@ -1,6 +1,10 @@
 //Di Vincenzo Topazio
 #include "Sniffer.h"
 
+void* pObject;
+
+static const char* LOG_TAG = "Sniffer";
+
 void mac2str(const uint8_t* ptr, char* string)
 {
   #ifdef MASKED
@@ -59,12 +63,15 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
   }
 }
 
+
 /*raccogliendo una lista di record riportanti come minimo
  l’indirizzo MAC del mittente, l’SSID richiesto(se presente),
 una marca temporale, l’hash del pacchetto, il livello del segnale ricevuto
 */
 void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 {
+    Sender *pSender = (Sender*)pObject;
+
 	if (type != WIFI_PKT_MGMT)
 		return;
 
@@ -102,12 +109,12 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     //json structure to send
     //TODO: da correggere
-    json j;
-    j["sender_mac"] = addr2;
-    j["timestamp"] = ppkt->rx_ctrl.timestamp;
-    j["rssi"] = ppkt->rx_ctrl.rssi;
-    //j["hashed_pkt"] = ipkt->payload;
-    j["ssid"] = "";
+    Record r;
+    r.sender_mac = addr2;
+    r.timestamp = ppkt->rx_ctrl.timestamp;
+    r.rssi = ppkt->rx_ctrl.rssi;
+    //r.hashed_pkt = ipkt->payload;
+    r.ssid = "";
 
 
 	printf("%d %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
@@ -129,12 +136,12 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
         strncpy(ssid, probe_req_frame->ssid, probe_req_frame->length);
 
-        j["ssid"] = ssid;
+        r.ssid = ssid;
 
         printf(", SSID=%s", ssid);
     }
     
-    serv->send(j);
+    pSender->push_back(r);
     
     //// Non serve, ma se servisse bisogna considerare il fatto che addr4[6] 
     //// non è piu nella struttura wifi_ieee80211_mac_hdr_t
@@ -161,7 +168,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 void Sniffer::init(){
     esp_wifi_set_promiscuous(true); //VT: attiva modalità promiscua (sniffing)
 	//VT: assegna callback da chiamare per ogni pacchetto ricevuto
-	printf("init sniffer: setting packet handler callback\n");
+    ESP_LOGI(LOG_TAG, "initialized: setting packet handler callback\n");
     esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
     wifi_sniffer_loop_channels();
 }

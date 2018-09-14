@@ -1,17 +1,18 @@
 //Di Vincenzo Topazio
 #include "Server.h"
 
+static const char* LOG_TAG = "Server";
+
 int Server::connect(std::string ipStr, int port){
     const char* ip = ipStr.c_str();
-
-
+	
 	// create a new socket
 	s = socket(AF_INET, SOCK_STREAM, 0);
 	if(s < 0) {
-		printf("Unable to allocate a new socket\n");
+		ESP_LOGE(LOG_TAG, "Unable to allocate a new socket");
 		return s;
 	}
-	printf("Socket allocated, id=%d\n", s);
+	ESP_LOGI(LOG_TAG, "Socket allocated, id=%d", s);
 
     struct sockaddr_in dest = {};
     dest.sin_family = AF_INET;
@@ -19,50 +20,50 @@ int Server::connect(std::string ipStr, int port){
 
     if(inet_aton(ip, &dest.sin_addr.s_addr ) <= 0)
     {
-        printf("\n inet_pton error occured\n");
+        ESP_LOGE(LOG_TAG, "inet_pton error occured");
         return -1;
-    } 
-    printf("Ip %s converted in sin_addr\n", ip);
+    }
 
 	// connect to the specified server
 	int result = ::connect(s, (struct sockaddr*)&dest, sizeof(dest));
 	if(result != 0) {
-		printf("Unable to connect to the target\n");
+		ESP_LOGE(LOG_TAG, "Unable to connect to the target");
 		::close(s);
 		return result;
 	}
-	printf("Connected to the target\n");
+	ESP_LOGI(LOG_TAG, "Connected to the target");
 
     return 0;
 }
 
+//TODO: create buffer for more elements at once?
 int Server::send(json j){
 
-	printf("\n");
-	cout << j.dump(4) << endl;
+	std::cout << "DEBUG: ipStr da inviare " << j.dump() << std::endl;
 
-	//TODO: DEBUG, DA RIMUOVERE
+	printf("\n");
 
 	const char *str_to_send = j.dump().c_str();
 
-	//receive buffer
-    char recv_buf[100];
-
 	// send the request
-	printf("SENDING:\n%s\n", str_to_send);
-
+	ESP_LOGI(LOG_TAG, "SENDING:\n%s", str_to_send);
 	int result = write(s, str_to_send, strlen(str_to_send)+1 );
 	if(result < 0) {
-		printf("Unable to send records\n");
+		ESP_LOGE(LOG_TAG, "Unable to send record");
 		::close(s);
 		return result;
 	}
-	printf("Records sent\n");
+	ESP_LOGI(LOG_TAG, "Record sent");
 	
-   
-	//response
+	return 0;
+}
+
+int Server::waitAck(){
+	//receive buffer
+    char recv_buf[100];
+
     //IMPLEMENT A OK/ERR MESSAGE TO KNOW IF ALL WENT WELL
-	printf("Response:\n");
+	ESP_LOGI(LOG_TAG, "RESPONSE:");
 	int r;
 	do {
 		memset(recv_buf, 0, sizeof(recv_buf));
@@ -72,10 +73,15 @@ int Server::send(json j){
 		}
 	} while(r > 0);	
 	printf("\n");
-	return 0;
+
+	if(strcmp(recv_buf,"OK")==0){
+		return 0;
+	}else{
+		return -1;
+	}
 }
 
 void Server::close(){
     ::close(s);
-	printf("Socket closed\n");
+	ESP_LOGI(LOG_TAG, "Socket closed");
 }
