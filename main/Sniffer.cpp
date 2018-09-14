@@ -59,6 +59,10 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
   }
 }
 
+/*raccogliendo una lista di record riportanti come minimo
+ l’indirizzo MAC del mittente, l’SSID richiesto(se presente),
+una marca temporale, l’hash del pacchetto, il livello del segnale ricevuto
+*/
 void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 {
 	if (type != WIFI_PKT_MGMT)
@@ -96,6 +100,16 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     mac2str(hdr->addr2, addr2);//SENDER
     mac2str(hdr->addr3, addr3);//FILTERING
 
+    //json structure to send
+    //TODO: da correggere
+    json j;
+    j["sender_mac"] = addr2;
+    j["timestamp"] = ppkt->rx_ctrl.timestamp;
+    j["rssi"] = ppkt->rx_ctrl.rssi;
+    //j["hashed_pkt"] = ipkt->payload;
+    j["ssid"] = "";
+
+
 	printf("%d %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
         /**< timestamp. The local time when this packet is received. 
         * It is precise only if modem sleep or light sleep is not enabled.
@@ -115,26 +129,31 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
         strncpy(ssid, probe_req_frame->ssid, probe_req_frame->length);
 
-        printf(",SSID=%s", ssid);
+        j["ssid"] = ssid;
+
+        printf(", SSID=%s", ssid);
     }
     
-    // Print ESSID if beacon
-    if (frame_ctrl->type == WIFI_PKT_MGMT && frame_ctrl->subtype == BEACON)
-    {
-        const wifi_mgmt_beacon_t *beacon_frame = (wifi_mgmt_beacon_t*) ipkt->payload;
-        char ssid[32] = {0};
+    serv->send(j);
+    
+    //// Non serve, ma se servisse bisogna considerare il fatto che addr4[6] 
+    //// non è piu nella struttura wifi_ieee80211_mac_hdr_t
+    // if (frame_ctrl->type == WIFI_PKT_MGMT && frame_ctrl->subtype == BEACON)
+    // {
+    //     const wifi_mgmt_beacon_t *beacon_frame = (wifi_mgmt_beacon_t*) ipkt->payload;
+    //     char ssid[32] = {0};
 
-        if (beacon_frame->tag_length >= 32)
-        {
-            strncpy(ssid, beacon_frame->ssid, 31);
-        }
-        else
-        {
-            strncpy(ssid, beacon_frame->ssid, beacon_frame->tag_length);
-        }
+    //     if (beacon_frame->tag_length >= 32)
+    //     {
+    //         strncpy(ssid, beacon_frame->ssid, 31);
+    //     }
+    //     else
+    //     {
+    //         strncpy(ssid, beacon_frame->ssid, beacon_frame->tag_length);
+    //     }
 
-        printf(",SSID=%s", ssid);
-    }
+    //     printf(",SSID=%s", ssid);
+    // }
 
     printf("\n");
 }
@@ -148,7 +167,6 @@ void Sniffer::init(){
 }
 
 
-
 void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = 1;
 
@@ -160,3 +178,5 @@ void Sniffer::wifi_sniffer_loop_channels(){
         //printf("channel %d\n", channel);
     }
 }
+
+

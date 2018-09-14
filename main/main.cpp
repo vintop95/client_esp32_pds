@@ -18,9 +18,11 @@
 #include "Sniffer.h"
 #include "Server.h"
 
+#include <cJSON.h>
+
 //VT: compilation switch in order to enable/disable
 //code for enabling connection to WIFI_SSID network
-#define WIFI_ENABLE_CONNECT (0)
+#define WIFI_ENABLE_CONNECT 1
 //VT: needed to connect in a wifi network
 //modify Knofig.projbuild to add config parameters like this
 //to set them use make menuconfig or modify sdkconfig
@@ -192,14 +194,31 @@ void app_main(void)
 	//VT: connect to WIFI_SSID network
 	#if WIFI_ENABLE_CONNECT
 		wifi.connectAP(WIFI_SSID, WIFI_PASS);	
+
 		Server server;
 		server.connect(SERVER_IP, SERVER_PORT);
-		server.send("ciao");
+
+
+		// create an empty structure (null)
+		json j;
+
+		// add a number that is stored as double (note the implicit conversion of j to an object)
+		j["pi"] = 3.141;
+
+		// add a Boolean that is stored as bool
+		j["happy"] = true;
+
+		// add a string that is stored as std::string
+		j["name"] = "Niels";
+
+		server.send(j);
+
+		
+		Sniffer sniffer(&server);
+		sniffer.init();
 	#endif
 
-	//VT: SNIFFER MODE
-	Sniffer sniffer;
-	sniffer.init();
+	
 
 	//VT: AP SCAN MODE
 	//wifi_scan();

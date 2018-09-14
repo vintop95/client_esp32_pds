@@ -138,7 +138,7 @@ Server.o: D:/Progetti/esp32_pds/main/Server.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h \
- C:/msys32/home/vince/esp/esp-idf/components/json/cJSON/cJSON.h
+ D:/Progetti/esp32_pds/main/json.hpp
 
 D:/Progetti/esp32_pds/main/Server.h:
 
@@ -418,5 +418,5 @@ C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h:
 
-C:/msys32/home/vince/esp/esp-idf/components/json/cJSON/cJSON.h:
+D:/Progetti/esp32_pds/main/json.hpp:
 /d/Progetti/esp32_pds/main/./Server.cpp:

@@ -14,18 +14,27 @@
 #include "nvs_flash.h"
 #include <string.h>
 
+#include "Server.h"
+
 #define	WIFI_CHANNEL_MAX		(13)
 #define	WIFI_CHANNEL_SWITCH_INTERVAL	(500)
+
+static Server* serv;
 
 class Sniffer {
 private:
     void wifi_sniffer_loop_channels();
     friend void wifi_sniffer_packet_handler(void*, wifi_promiscuous_pkt_type_t);
 public:
+    Sniffer(Server* srv){  
+        serv = srv;
+    }
     void init();
 };
 
-
+//per qualche arcano motivo questa struttura appare di 4 byte
+//invece che di 2, quindi ho dovuto rimuovere duration_id dal
+//wifi_ieee80211_mac_hdr_t, visto che non serve
 typedef struct {
      unsigned protocol:2;
      unsigned type:2;
@@ -89,5 +98,7 @@ typedef struct{
     unsigned length:8;
     char ssid[0];
 } wifi_mgmt_probe_req_t;
+
+
 
 #endif /* SNIFFER_H_ */

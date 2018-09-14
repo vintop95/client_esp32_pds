@@ -36,9 +36,15 @@ int Server::connect(std::string ipStr, int port){
     return 0;
 }
 
-int Server::send(std::string str){
+int Server::send(json j){
 
-    const char* str_to_send = str.c_str();
+	printf("\n");
+	cout << j.dump(4) << endl;
+
+	//TODO: DEBUG, DA RIMUOVERE
+
+	const char *str_to_send = j.dump().c_str();
+
 	//receive buffer
     char recv_buf[100];
 

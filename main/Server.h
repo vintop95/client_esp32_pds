@@ -14,20 +14,23 @@
 #include "esp_event_loop.h"
 #include "nvs_flash.h"
 
+#include <iostream>
 #include <string>
 #include <string.h>
 
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 
-#include <cJSON.h>
+#include "json.hpp"
+using json = nlohmann::json;
+using namespace std;
 
 class Server {
 private:
     int s;//socket
 public:
     int connect(std::string ip, int port);
-    int send(std::string); 
+    int send(json); 
     void close();
 };
 
