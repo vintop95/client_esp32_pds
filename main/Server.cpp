@@ -3,6 +3,10 @@
 
 static const char* LOG_TAG = "Server";
 
+bool eqStr(const char* str1, const char* str2){
+    return (strncmp(str1,str2,strlen(str2) == 0));
+}
+
 int Server::connect(std::string ipStr, int port){
     const char* ip = ipStr.c_str();
 	
@@ -33,17 +37,18 @@ int Server::connect(std::string ipStr, int port){
 	}
 	ESP_LOGI(LOG_TAG, "Connected to the target");
 
+	//send info about initializing the connection
+	json j;
+	j["name"] = DEVICE_NAME;
+	
+	this->sendInit(j);
+	this->waitAck();
     return 0;
 }
 
-//TODO: create buffer for more elements at once?
-int Server::send(json j){
 
-	std::cout << "DEBUG: ipStr da inviare " << j.dump() << std::endl;
-
-	printf("\n");
-
-	const char *str_to_send = j.dump().c_str();
+int Server::send(std::string str){
+	const char *str_to_send = str.c_str();
 
 	// send the request
 	ESP_LOGI(LOG_TAG, "SENDING:\n%s", str_to_send);
@@ -54,13 +59,30 @@ int Server::send(json j){
 		return result;
 	}
 	ESP_LOGI(LOG_TAG, "Record sent");
-	
+
 	return 0;
+}
+
+//TODO: create buffer for more elements at once?
+int Server::send(json j){
+	return this->send(j.dump());
+}
+
+int Server::sendInit(json j){
+	return this->send("INIT " + j.dump());
+}
+
+int Server::sendData(json j){
+	return this->send("DATA " + j.dump());
+}
+
+int Server::sendEnd(){
+	return this->send(string("END"));
 }
 
 int Server::waitAck(){
 	//receive buffer
-    char recv_buf[100];
+    char recv_buf[20];
 
     //IMPLEMENT A OK/ERR MESSAGE TO KNOW IF ALL WENT WELL
 	ESP_LOGI(LOG_TAG, "RESPONSE:");
@@ -74,7 +96,7 @@ int Server::waitAck(){
 	} while(r > 0);	
 	printf("\n");
 
-	if(strcmp(recv_buf,"OK")==0){
+	if(eqStr(recv_buf,"OK")){
 		return 0;
 	}else{
 		return -1;

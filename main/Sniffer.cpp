@@ -5,6 +5,10 @@ void* pObject;
 
 static const char* LOG_TAG = "Sniffer";
 
+Sniffer::Sniffer(Sender* sndr){  
+    pObject = sndr;
+}
+
 void mac2str(const uint8_t* ptr, char* string)
 {
   #ifdef MASKED
@@ -63,6 +67,7 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
   }
 }
 
+extern void to_json(json& j, const Record& r);
 
 /*raccogliendo una lista di record riportanti come minimo
  l’indirizzo MAC del mittente, l’SSID richiesto(se presente),
@@ -142,7 +147,9 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     }
     
     pSender->push_back(r);
-    
+    json j = r;
+    pSender->server->send(j);
+
     //// Non serve, ma se servisse bisogna considerare il fatto che addr4[6] 
     //// non è piu nella struttura wifi_ieee80211_mac_hdr_t
     // if (frame_ctrl->type == WIFI_PKT_MGMT && frame_ctrl->subtype == BEACON)

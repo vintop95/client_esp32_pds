@@ -2,31 +2,10 @@
 #ifndef SENDER_H_
 #define SENDER_H_
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-
-#include "esp_log.h"
-#include "esp_wifi.h"
-#include "esp_wifi_types.h"
-#include "esp_system.h"
-#include "esp_event.h"
-#include "esp_event_loop.h"
-#include "nvs_flash.h"
-
-#include <iostream>
-#include <string>
-#include <string.h>
-#include <vector>
-
-#include "lwip/netdb.h"
-#include "lwip/sockets.h"
+#include "main.h"
 
 #include "Server.h"
-#include "json.hpp"
-
-using json = nlohmann::json;
-using namespace std;
+#include "Task.h"
 
 struct Record{
     std::string sender_mac;
@@ -36,21 +15,28 @@ struct Record{
     std::string ssid;
 };
 
-
+class SenderTask;
 
 class Sender {
 private:
-    Server* server;
+    unique_ptr<SenderTask> t;
     int msListenPeriod;
     std::vector<Record> records;
 public:
-    Sender(Server* srv, int ms): server(srv), msListenPeriod(ms){
-
-    }
+    Server* server;
+    Sender(Server* srv, int ms);
     int sendRecordsToServer();
 
     void push_back(Record r);
     friend void to_json(json& j, const Record& r);
+};
+
+class SenderTask: public Task{
+public:
+    void run(void *data){
+        Sender* sender = (Sender *)data; 
+        sender->sendRecordsToServer();
+    }
 };
 
 #endif 

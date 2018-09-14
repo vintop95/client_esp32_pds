@@ -1,20 +1,17 @@
 main.o: D:/Progetti/esp32_pds/main/main.cpp \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
+ D:/Progetti/esp32_pds/main/main.h \
+ C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/reent.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/newlib.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/config.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/ieeefp.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/features.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/config/core-isa.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/reent.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_types.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_types.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_default_types.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/lock.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/cdefs.h \
- C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h \
- C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_intsup.h \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOSConfig.h \
@@ -30,6 +27,8 @@ main.o: D:/Progetti/esp32_pds/main/main.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/corebits.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/cdefs.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h \
  C:/msys32/home/vince/esp/esp-idf/components/newlib/include/alloca.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/rom/ets_sys.h \
@@ -130,23 +129,27 @@ main.o: D:/Progetti/esp32_pds/main/main.cpp \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_wifi_os_adapter.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event.h \
  C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h \
- D:/Progetti/esp32_pds/main/WiFi.h \
- C:/msys32/home/vince/esp/esp-idf/components/mdns/include/mdns.h \
- D:/Progetti/esp32_pds/main/FreeRTOS.h \
- C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h \
- D:/Progetti/esp32_pds/main/WiFiEventHandler.h \
- D:/Progetti/esp32_pds/main/Sniffer.h \
- C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h \
- C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h \
- D:/Progetti/esp32_pds/main/Server.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/netdb.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/inet.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/sockets.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h \
  C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h \
- D:/Progetti/esp32_pds/main/json.hpp D:/Progetti/esp32_pds/main/Sender.h
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h \
+ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h \
+ D:/Progetti/esp32_pds/main/WiFi.h \
+ C:/msys32/home/vince/esp/esp-idf/components/mdns/include/mdns.h \
+ D:/Progetti/esp32_pds/main/FreeRTOS.h \
+ C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h \
+ D:/Progetti/esp32_pds/main/WiFiEventHandler.h \
+ D:/Progetti/esp32_pds/main/json.hpp D:/Progetti/esp32_pds/main/Sniffer.h \
+ D:/Progetti/esp32_pds/main/Sender.h D:/Progetti/esp32_pds/main/Server.h \
+ D:/Progetti/esp32_pds/main/Task.h
 
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
+D:/Progetti/esp32_pds/main/main.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/reent.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h:
 
@@ -160,10 +163,6 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/features.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/config/core-isa.h:
 
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/reent.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h:
-
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/_types.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_types.h:
@@ -171,12 +170,6 @@ C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_types.h:
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/_default_types.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/lock.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/cdefs.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/FreeRTOS.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdint.h:
 
@@ -207,6 +200,10 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/corebits.h:
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/xtensa/xtruntime-frames.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/stdlib.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/_ansi.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/cdefs.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/newlib/include/machine/stdlib.h:
 
@@ -408,24 +405,6 @@ C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/esp32/include/esp_event_loop.h:
 
-D:/Progetti/esp32_pds/main/WiFi.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/mdns/include/mdns.h:
-
-D:/Progetti/esp32_pds/main/FreeRTOS.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h:
-
-D:/Progetti/esp32_pds/main/WiFiEventHandler.h:
-
-D:/Progetti/esp32_pds/main/Sniffer.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs_flash.h:
-
-C:/msys32/home/vince/esp/esp-idf/components/nvs_flash/include/nvs.h:
-
-D:/Progetti/esp32_pds/main/Server.h:
-
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/netdb.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/inet.h:
@@ -436,7 +415,27 @@ C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/err.h:
 
 C:/msys32/home/vince/esp/esp-idf/components/lwip/lwip/src/include/lwip/errno.h:
 
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/string.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/newlib/include/sys/string.h:
+
+D:/Progetti/esp32_pds/main/WiFi.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/mdns/include/mdns.h:
+
+D:/Progetti/esp32_pds/main/FreeRTOS.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h:
+
+D:/Progetti/esp32_pds/main/WiFiEventHandler.h:
+
 D:/Progetti/esp32_pds/main/json.hpp:
 
+D:/Progetti/esp32_pds/main/Sniffer.h:
+
 D:/Progetti/esp32_pds/main/Sender.h:
+
+D:/Progetti/esp32_pds/main/Server.h:
+
+D:/Progetti/esp32_pds/main/Task.h:
 /d/Progetti/esp32_pds/main/./main.cpp:

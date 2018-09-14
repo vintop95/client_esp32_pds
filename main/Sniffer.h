@@ -2,19 +2,8 @@
 #ifndef SNIFFER_H_
 #define SNIFFER_H_
 
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-#include "esp_log.h"
-#include "esp_wifi.h"
-#include "esp_wifi_types.h"
-#include "esp_system.h"
-#include "esp_event.h"
-#include "esp_event_loop.h"
-#include "nvs_flash.h"
-#include <string.h>
+#include "main.h"
 
-#include "Server.h"
 #include "Sender.h"
 
 #define	WIFI_CHANNEL_MAX		(13)
@@ -28,9 +17,7 @@ private:
     void wifi_sniffer_loop_channels();
     friend void wifi_sniffer_packet_handler(void*, wifi_promiscuous_pkt_type_t);
 public:
-    Sniffer(Sender* sndr){  
-        pObject = sndr;
-    }
+    Sniffer(Sender* sndr);
     void init();
 };
 
