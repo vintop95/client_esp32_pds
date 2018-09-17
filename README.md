@@ -144,7 +144,8 @@ File contenente i parametri di configurazione impostabili con ```make menuconfig
 
 # Ulteriori informazioni
 ### Videolezione del progetto
-https://video.polito.it/dl/4cd708b427c1386b1fcc74040f49c7db/5b97c9a9/2018/2018_02GRSOV_0219089/Programmazione_di_sistema_lez_24/Programmazione_di_sistema_lez_24.mp4
+LEZIONE 24 2017/18
+https://video.polito.it/dl/ad1eec5c99f6f41650c415ac15604a74/5b9fece3/2018/2018_02GRSOV_0219089/Programmazione_di_sistema_lez_24/Programmazione_di_sistema_lez_24.mp4
 
 ### Driver
 CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)
