@@ -3,10 +3,11 @@
 
 static const char* LOG_TAG = "Sender";
 
-Sender::Sender(Server* srv, int ms): t(new SenderTask()), msListenPeriod(ms), server(srv){
-        t->setName("Sender");
-        t->delay(msListenPeriod);
-        t->start(this);
+Sender::Sender(Server* srv, int ms): msListenPeriod(ms), server(srv){
+    //maybe using a task is not the best way
+        //t->setName("Sender");
+        //t->delay(msListenPeriod);
+        //t->start(this);
 }
 
 void to_json(json& j, const Record& r) {
@@ -20,20 +21,26 @@ void to_json(json& j, const Record& r) {
 //Function to call each listenPeriod
 int Sender::sendRecordsToServer(){
     json j;
-
+    int res = 0;
+    
     ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
 
-    server->send(string("DATA "));
+    res = server->connect();
+
+    if (res != 0){
+        return -1;
+    }
 
     for(auto r: records){
         j = r;
-        std::cout << j << std::endl;
-        server->send(j);
+        server->sendData(j);
     }
+    //res = server->waitAck();
 
     server->sendEnd();
+    server->close();
 
-    return server->waitAck();
+    return res;
 }
 
 void Sender::push_back(Record r){

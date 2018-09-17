@@ -1,12 +1,19 @@
 //Di Vincenzo Topazio
 #include "Sniffer.h"
 
-void* pObject;
+Sender* pSender;
 
 static const char* LOG_TAG = "Sniffer";
+void callback(FreeRTOSTimer *pTimer);
 
-Sniffer::Sniffer(Sender* sndr){  
-    pObject = sndr;
+Sniffer::Sniffer(Sender* sndr):
+timer("listenTimer",
+      pdMS_TO_TICKS(sndr->getListenPeriod()),
+      pdTRUE,
+      sndr,
+      callback)
+{  
+    pSender = sndr;
 }
 
 void mac2str(const uint8_t* ptr, char* string)
@@ -75,7 +82,6 @@ una marca temporale, l’hash del pacchetto, il livello del segnale ricevuto
 */
 void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 {
-    Sender *pSender = (Sender*)pObject;
 
 	if (type != WIFI_PKT_MGMT)
 		return;
@@ -145,10 +151,10 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
         printf(", SSID=%s", ssid);
     }
-    
+    printf("\n");
     pSender->push_back(r);
-    json j = r;
-    pSender->server->send(j);
+    //json j = r;
+    //pSender->server->sendData(j);
 
     //// Non serve, ma se servisse bisogna considerare il fatto che addr4[6] 
     //// non è piu nella struttura wifi_ieee80211_mac_hdr_t
@@ -173,10 +179,10 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 }
 
 void Sniffer::init(){
-    esp_wifi_set_promiscuous(true); //VT: attiva modalità promiscua (sniffing)
+    //esp_wifi_set_promiscuous(true); //VT: attiva modalità promiscua (sniffing)
 	//VT: assegna callback da chiamare per ogni pacchetto ricevuto
     ESP_LOGI(LOG_TAG, "initialized: setting packet handler callback\n");
-    esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
+    //esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
     wifi_sniffer_loop_channels();
 }
 
@@ -184,13 +190,33 @@ void Sniffer::init(){
 void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = 1;
 
-	while (true) {
-		//VT: loop all channels
-		vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
-        esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-		channel = (channel % WIFI_CHANNEL_MAX) + 1;
-        //printf("channel %d\n", channel);
+    timer.start();
+    Record r;
+    r.sender_mac = "";
+    r.timestamp = 0;
+    r.rssi = 0;
+    r.ssid = "";
+    //pSender->server->send(r);
+    for(int i=0;i<50;++i){
+        pSender->push_back(r);
     }
+    
+    while (true) {
+        //VT: loop all channels
+        vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
+        //esp_wifi_set_promiscuous(false);
+        esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        //esp_wifi_set_promiscuous(true);
+        channel = (channel % WIFI_CHANNEL_MAX) + 1;
+    }
+
 }
 
-
+void callback(FreeRTOSTimer *pTimer) {
+    // Callback code here ...
+    //esp_wifi_set_promiscuous(false);
+    pSender->sendRecordsToServer();
+    //cout << "Timer scaduto";
+    //esp_wifi_set_promiscuous(true);
+}

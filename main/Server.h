@@ -7,8 +7,11 @@
 class Server {
 private:
     int s;//socket
+    string ipStr;
+    int port;
 public:
-    int connect(std::string ip, int port);
+    void setIpPort(std::string, int);
+    int connect();
     int send(std::string str);
     int send(json); 
     int sendInit(json j);

@@ -141,6 +141,8 @@ tcp_test.o: D:/Progetti/esp32_pds/main/tcp_test.cpp \
  D:/Progetti/esp32_pds/main/FreeRTOS.h \
  C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h \
  D:/Progetti/esp32_pds/main/WiFiEventHandler.h \
+ D:/Progetti/esp32_pds/main/FreeRTOSTimer.h \
+ C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/timers.h \
  D:/Progetti/esp32_pds/main/json.hpp
 
 D:/Progetti/esp32_pds/main/main.h:
@@ -426,6 +428,10 @@ D:/Progetti/esp32_pds/main/FreeRTOS.h:
 C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/ringbuf.h:
 
 D:/Progetti/esp32_pds/main/WiFiEventHandler.h:
+
+D:/Progetti/esp32_pds/main/FreeRTOSTimer.h:
+
+C:/msys32/home/vince/esp/esp-idf/components/freertos/include/freertos/timers.h:
 
 D:/Progetti/esp32_pds/main/json.hpp:
 /d/Progetti/esp32_pds/main/./tcp_test.cpp:

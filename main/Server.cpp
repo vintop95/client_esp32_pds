@@ -4,10 +4,15 @@
 static const char* LOG_TAG = "Server";
 
 bool eqStr(const char* str1, const char* str2){
-    return (strncmp(str1,str2,strlen(str2) == 0));
+    return (strncmp(str1,str2,strlen(str2)) == 0);
 }
 
-int Server::connect(std::string ipStr, int port){
+void Server::setIpPort(std::string _ip, int _port){
+	ipStr = _ip;
+	port = _port;
+}
+
+int Server::connect(){
     const char* ip = ipStr.c_str();
 	
 	// create a new socket
@@ -31,11 +36,11 @@ int Server::connect(std::string ipStr, int port){
 	// connect to the specified server
 	int result = ::connect(s, (struct sockaddr*)&dest, sizeof(dest));
 	if(result != 0) {
-		ESP_LOGE(LOG_TAG, "Unable to connect to the target");
+		ESP_LOGE(LOG_TAG, "Unable to connect to the target %s:%d", ip, port);
 		::close(s);
 		return result;
 	}
-	ESP_LOGI(LOG_TAG, "Connected to the target");
+	ESP_LOGI(LOG_TAG, "Connected to the target %s:%d", ip, port);
 
 	//send info about initializing the connection
 	json j;
@@ -86,21 +91,21 @@ int Server::waitAck(){
 
     //IMPLEMENT A OK/ERR MESSAGE TO KNOW IF ALL WENT WELL
 	ESP_LOGI(LOG_TAG, "RESPONSE:");
-	int r;
+	int r=0;
 	do {
 		memset(recv_buf, 0, sizeof(recv_buf));
-	    r = read(s, recv_buf, sizeof(recv_buf) - 1);	
+	    r = read(s, recv_buf, sizeof(recv_buf) - 1);
 		for(int i = 0; i < r; i++) {
 			putchar(recv_buf[i]);
 		}
+		printf("\n");
+		if(eqStr(recv_buf,"OK")){
+			return 0;
+		}else{
+			return -1;
+		}
 	} while(r > 0);	
 	printf("\n");
-
-	if(eqStr(recv_buf,"OK")){
-		return 0;
-	}else{
-		return -1;
-	}
 }
 
 void Server::close(){

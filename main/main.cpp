@@ -83,13 +83,9 @@ void app_main(void)
 
 	Server server;
 	while(1){
-		server.connect(SERVER_IP, SERVER_PORT);
-
-		Sender sender(&server, 1000);
-
+		server.setIpPort(SERVER_IP, SERVER_PORT);
+		Sender sender(&server, 10000);
 		Sniffer sniffer(&sender);
 		sniffer.init();
-
-		server.close();
 	}
 }
