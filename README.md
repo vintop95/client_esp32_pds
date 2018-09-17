@@ -6,10 +6,10 @@
 - Vincenzo Topazio
 
 ## Configurazione ambiente di sviluppo
-* Tutorial base: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
-* IDE:
-Nonostante sia consigliato l'utilizzo di Eclipse, consiglio l'uso di Visual Studio Code poiché offre un terminale integrato semplice da gestire e inoltre offre l'IntelliSense facile da impostare
-* Tutorial:
+* **Tutorial base**: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
+* **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
+* **IDE**: Nonostante sia consigliato l'utilizzo di Eclipse, consiglio l'uso di Visual Studio Code poiché offre un terminale integrato semplice da gestire e inoltre offre l'IntelliSense facile da impostare
+* **Tutorial VS CODE**:
   * https://github.com/VirgiliaBeatrice/esp32-devenv-vscode/blob/master/tutorial.md
   * https://www.youtube.com/watch?v=VPgEc8FUiqI
 
@@ -29,7 +29,7 @@ Per convenzione la porta di ascolto del server è 7856
 Ci sono due modi per testare il client con un server:
 1. usa netcat, permette di inviare e ricevere da riga di comando i messaggi nella socket TCP:  
 nella repo è presente la cartella netcat-1.11, eseguire ./nc.exe da linea di comando come segue:  
-- apri powershell 
+- apri powershell   
 crea server:
 	- ./nc.exe -L -p nPorta  
 client:  
@@ -122,7 +122,7 @@ aggiungere a dns.h
 ```
 
 ```WiFiEventHandler.h```  
-Classe di supporto a ```Wifi.h``` per la definizione di callback da chiamare all'avvenire di certi eventi riguardanti l'interfaccia WiFi
+Classe di supporto a ```WiFi.h``` per la definizione di callback da chiamare all'avvenire di certi eventi riguardanti l'interfaccia WiFi
 
 ```FreeRTOSTimer.h```  
 Classe che semplifica l'interfaccia offerta dal sistema ESP32 per la gestione dei timer  
@@ -164,15 +164,10 @@ File contenente le definizioni dei "task" offerti da Visual Studio Code per la v
 File contenente i parametri di configurazione impostabili con ```make menuconfig```
 
 
-
 # Ulteriori informazioni
 ### Videolezione del progetto
 LEZIONE 24 2017/18
 https://video.polito.it/dl/ad1eec5c99f6f41650c415ac15604a74/5b9fece3/2018/2018_02GRSOV_0219089/Programmazione_di_sistema_lez_24/Programmazione_di_sistema_lez_24.mp4
-
-### Driver
-CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)
-
 
 ### Shortcuts for rapid compilation
 - F4: flash app
@@ -181,7 +176,6 @@ CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta 
 - F12: menuconfig
 
 ### Configure the project
-
 ```
 make menuconfig
 ```
@@ -189,12 +183,11 @@ make menuconfig
 * Set serial port under Serial Flasher Options.
 
 ### Build and Flash
-
 Build the project and flash it to the board, then run monitor tool to view serial output:
 
 ```
-make flash: fa il build dell'applicazione e la flasha nella scheda
-make monitor: avvia l'interfaccia seriale con la scheda
+make flash //fa il build dell'applicazione e la flasha nella scheda
+make monitor //avvia l'interfaccia seriale con la scheda
 ```
 
 (To exit the serial monitor, type ``Ctrl-]`` (nel layout italiano ] corrisponde al tasto +) .)
