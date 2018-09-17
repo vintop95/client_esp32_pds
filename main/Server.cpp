@@ -1,17 +1,44 @@
-//Di Vincenzo Topazio
+/**
+ * PDS Project - Client ESP32
+ * Gianluca D'Alleo
+ * Salvatore Di Cara
+ * Giorgio Pizzuto
+ * Vincenzo Topazio
+ */
 #include "Server.h"
 
 static const char* LOG_TAG = "Server";
 
+/**
+ * @brief Wrapper of strncmp
+ * 
+ * @param First string to compare
+ * @param Second string to compare
+ * 
+ * @return true if they are equal
+ */
 bool eqStr(const char* str1, const char* str2){
     return (strncmp(str1,str2,strlen(str2)) == 0);
 }
 
+/**
+ * @brief It sets the ip and port of the server
+ * 
+ * @param IP of the server
+ * @param Port of the server
+ * 
+ * @return N/A
+ */
 void Server::setIpPort(std::string _ip, int _port){
 	ipStr = _ip;
 	port = _port;
 }
 
+/**
+ * @brief It connects to the server
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::connect(){
     const char* ip = ipStr.c_str();
 	
@@ -51,7 +78,13 @@ int Server::connect(){
     return 0;
 }
 
-
+/**
+ * @brief It sends a std::string to the server
+ * 
+ * @param String to send
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::send(std::string str){
 	const char *str_to_send = str.c_str();
 
@@ -69,22 +102,55 @@ int Server::send(std::string str){
 }
 
 //TODO: create buffer for more elements at once?
+/**
+ * @brief It sends a json object to the server
+ * 
+ * @param Json to send
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::send(json j){
 	return this->send(j.dump());
 }
 
+/**
+ * @brief It sends a INIT message to the server
+ * 
+ * @param Json to send
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::sendInit(json j){
 	return this->send("INIT " + j.dump());
 }
 
+/**
+ * @brief It sends a DATA message to the server
+ * 
+ * @param Json to send
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::sendData(json j){
 	return this->send("DATA " + j.dump());
 }
 
+/**
+ * @brief It sends a END message to the server
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::sendEnd(){
 	return this->send(string("END"));
 }
 
+/**
+ * @brief It waits the ack from the server
+ * - OK: all went well
+ * - ERR: some error occurred
+ * 
+ * @return 0 if all went well, a number != 0 otherwise
+ */
 int Server::waitAck(){
 	//receive buffer
     char recv_buf[20];
@@ -108,6 +174,9 @@ int Server::waitAck(){
 	printf("\n");
 }
 
+/**
+ * @brief Close the socket with the server
+ */
 void Server::close(){
     ::close(s);
 	ESP_LOGI(LOG_TAG, "Socket closed");

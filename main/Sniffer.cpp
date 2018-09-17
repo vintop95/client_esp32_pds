@@ -1,11 +1,33 @@
-//Di Vincenzo Topazio
+/**
+ * PDS Project - Client ESP32
+ * Gianluca D'Alleo
+ * Salvatore Di Cara
+ * Giorgio Pizzuto
+ * Vincenzo Topazio
+ */
 #include "Sniffer.h"
 
+static const char* LOG_TAG = "Sniffer";
+
+/**
+ * @brief Pointer to a Sender defined out here in order
+ * to use it in callbacks, defining it in the Sniffer class
+ * make it impossible to be called by the callback
+ */
 Sender* pSender;
 
-static const char* LOG_TAG = "Sniffer";
+/**
+ * @brief Prototype of callback defined at the end of the file
+ */
 void callback(FreeRTOSTimer *pTimer);
 
+/**
+ * @brief Sniffer constructor
+ * 
+ * @param Sender object used by the sniffer to send Records
+ * 
+ * @return String of packet type.
+ */
 Sniffer::Sniffer(Sender* sndr):
 timer("listenTimer",
       pdMS_TO_TICKS(sndr->getListenPeriod()),
@@ -16,6 +38,14 @@ timer("listenTimer",
     pSender = sndr;
 }
 
+/**
+ * @brief Utility function that gives a string of the mac passed
+ * 
+ * @param Array of 8 bit integers representing the mac address
+ * @param String representing the mac address to return
+ * 
+ * @return N/A
+ */
 void mac2str(const uint8_t* ptr, char* string)
 {
   #ifdef MASKED
@@ -26,6 +56,14 @@ void mac2str(const uint8_t* ptr, char* string)
   return;
 }
 
+/**
+ * @brief Utility function that gives a string of the packet type
+ * 
+ * @param Type of the packet received
+ * @param Subtype of the management packet received
+ * 
+ * @return String of packet type.
+ */
 const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtypes_t subtype)
 {
   switch(type)
@@ -74,15 +112,32 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
   }
 }
 
+/**
+ * @brief Called by json object to convert Record object in json
+ * 
+ * @param Reference of json element
+ * @param Const ref to the Record to convert
+ * 
+ * @return N/A.
+ */
 extern void to_json(json& j, const Record& r);
 
-/*raccogliendo una lista di record riportanti come minimo
- l’indirizzo MAC del mittente, l’SSID richiesto(se presente),
-una marca temporale, l’hash del pacchetto, il livello del segnale ricevuto
-*/
+/**
+ * @brief Callback that handles the sniffed packet
+ * It must push back to the list of records the following fields:
+ * - l’indirizzo MAC del mittente
+ * - l’SSID richiesto(se presente)
+ * - una marca temporale
+ * - l’hash del pacchetto
+ * - il livello del segnale ricevuto
+ * 
+ * @param Pointer to the packet received
+ * @param Type of the packet received
+ * 
+ * @return N/A.
+ */
 void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 {
-
 	if (type != WIFI_PKT_MGMT)
 		return;
 
@@ -99,7 +154,6 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     if(frame_ctrl->subtype != PROBE_REQ){
         return;
     }
-
     
     ////DEBUG: stampa contenuto della variabile ipkt
     //printf("SIZEOF wifi_header_frame_control_t: %d\n", sizeof(wifi_header_frame_control_t));
@@ -124,9 +178,9 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     r.sender_mac = addr2;
     r.timestamp = ppkt->rx_ctrl.timestamp;
     r.rssi = ppkt->rx_ctrl.rssi;
+    //TODO: inserire correttamente payload del pacchetto
     //r.hashed_pkt = ipkt->payload;
     r.ssid = "";
-
 
 	printf("%d %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
         /**< timestamp. The local time when this packet is received. 
@@ -152,7 +206,10 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
         printf(", SSID=%s", ssid);
     }
     printf("\n");
+
+    //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
+    //TODO: decommentare se si vuole inviare il record immediatamente
     //json j = r;
     //pSender->server->sendData(j);
 
@@ -162,7 +219,6 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     // {
     //     const wifi_mgmt_beacon_t *beacon_frame = (wifi_mgmt_beacon_t*) ipkt->payload;
     //     char ssid[32] = {0};
-
     //     if (beacon_frame->tag_length >= 32)
     //     {
     //         strncpy(ssid, beacon_frame->ssid, 31);
@@ -171,22 +227,34 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     //     {
     //         strncpy(ssid, beacon_frame->ssid, beacon_frame->tag_length);
     //     }
-
     //     printf(",SSID=%s", ssid);
     // }
 
     printf("\n");
 }
 
+/**
+ * @brief Initialize the Sniffer, enabling promiscuous mode
+ * and setting the callback
+ * 
+ * @return N/A.
+ */
 void Sniffer::init(){
-    //esp_wifi_set_promiscuous(true); //VT: attiva modalità promiscua (sniffing)
-	//VT: assegna callback da chiamare per ogni pacchetto ricevuto
-    ESP_LOGI(LOG_TAG, "initialized: setting packet handler callback\n");
-    //esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
+    esp_wifi_set_promiscuous(true);
+    ESP_LOGI(LOG_TAG, "initialized: setting sniffed packet handler callback\n");
+    //TODO: commentare per testare l'invio di pacchetti
+    //senza poter riceverne
+    esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
     wifi_sniffer_loop_channels();
 }
 
-
+/**
+ * @brief It loops wifi channels.
+ * The assignment says to listen to just one channel, but listen
+ * to more channels could be useful.
+ * 
+ * @return N/A.
+ */
 void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = 1;
 
@@ -213,8 +281,17 @@ void Sniffer::wifi_sniffer_loop_channels(){
 
 }
 
+/**
+ * @brief Callback called by the Timer.
+ *
+ * @param Pointer to the Timer Object
+ * 
+ * @return N/A.
+ */
 void callback(FreeRTOSTimer *pTimer) {
-    // Callback code here ...
+    //TODO: Ho commentato le linee set_promiscous
+    //perché causavano malfunzionamenti
+
     //esp_wifi_set_promiscuous(false);
     pSender->sendRecordsToServer();
     //cout << "Timer scaduto";

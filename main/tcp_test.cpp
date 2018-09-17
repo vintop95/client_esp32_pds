@@ -81,3 +81,19 @@ void tcp_test(void){
 		vTaskDelay(1000 / portTICK_RATE_MS);
 	}
 }
+
+void wifi_scan(WiFi wifi){
+	auto ap_records = wifi.scan();
+	int ap_num = ap_records.size();
+
+	// print the list 
+	printf("Found %d access points:\n", ap_num);
+	printf("\n");
+	printf("----------------------------------------------------------------\n");
+	for(int i = 0; i < ap_num; i++)
+		ap_records[i].toString();
+	printf("----------------------------------------------------------------\n");
+
+	// infinite loop
+	xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
+}

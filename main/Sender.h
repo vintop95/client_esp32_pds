@@ -1,4 +1,10 @@
-//Di Vincenzo Topazio
+/**
+ * PDS Project - Client ESP32
+ * Gianluca D'Alleo
+ * Salvatore Di Cara
+ * Giorgio Pizzuto
+ * Vincenzo Topazio
+ */
 #ifndef SENDER_H_
 #define SENDER_H_
 
@@ -7,6 +13,10 @@
 #include "Server.h"
 #include "Task.h"
 
+/**
+ * @brief Struttura che raccoglie le 
+ * informazioni dei pacchetti ascoltati necessari per l'elaborazione
+ */
 struct Record{
     std::string sender_mac;
     uint32_t timestamp;
@@ -15,8 +25,13 @@ struct Record{
     std::string ssid;
 };
 
+/**
+ * @brief Gestisce la raccolta e l'invio dei Record usando l'interfaccia
+ *  offerta da Server
+ */
 class Sender {
 private:
+    //Period of time in which ESP32 sniffs packets expressed in milliseconds
     int msListenPeriod;
     std::vector<Record> records;
 public:

@@ -1,3 +1,10 @@
+/**
+ * PDS Project - Client ESP32
+ * Gianluca D'Alleo
+ * Salvatore Di Cara
+ * Giorgio Pizzuto
+ * Vincenzo Topazio
+ */
 #ifndef MAIN_H_
 #define MAIN_H_
 
@@ -28,16 +35,14 @@ using json = nlohmann::json;
 using namespace std;
 
 #define DEVICE_NAME "ESP0";
-//VT: compilation switch in order to enable/disable
-//code for enabling connection to WIFI_SSID network
-#define WIFI_ENABLE_CONNECT 1
-//VT: needed to connect in a wifi network
-//modify Knofig.projbuild to add config parameters like this
-//to set them use make menuconfig or modify sdkconfig
+
 // #define WIFI_SSID "CUTRE-TPS" //CONFIG_ESP_WIFI_SSID
 // #define WIFI_PASS "Einaudi1935!" //CONFIG_ESP_WIFI_PASSWORD
 // #define SERVER_IP "172.16.139.251" //"192.168.43.5"
 
+//VT: needed to connect in a wifi network
+//modify Knofig.projbuild to add config parameters like this
+//to set them use make menuconfig or modify sdkconfig
 #define WIFI_SSID CONFIG_ESP_WIFI_SSID
 #define WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
 #define SERVER_IP "192.168.43.5"

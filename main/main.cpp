@@ -1,15 +1,25 @@
 /**
- * PDS Project - ESP32
- * ESP_LOGI -> INFO
- * ESP_LOGD -> DEBUG (NORMALLY DOESN'T PRINT)
- * ESP_LOGE -> ERROR
+ * PDS Project - Client ESP32
+ * Gianluca D'Alleo
+ * Salvatore Di Cara
+ * Giorgio Pizzuto
+ * Vincenzo Topazio
  */
+
+/**
+ * LOG FUNCTIONS:
+ * ESP_LOGI() -> INFO
+ * ESP_LOGD() -> DEBUG (NORMALLY DOES NOT PRINT)
+ * ESP_LOGE() -> ERROR
+ */
+
 #include "main.h"
 
 #include "Sniffer.h"
 #include "Server.h"
 #include "Sender.h"
 
+//Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
 
 //VT: Empty infinite task -> callback for xTaskCreate api function
@@ -20,23 +30,7 @@ void loop_task(void *pvParameter)
     }
 }
 
-void wifi_scan(WiFi wifi){
-	auto ap_records = wifi.scan();
-	int ap_num = ap_records.size();
-
-	// print the list 
-	printf("Found %d access points:\n", ap_num);
-	printf("\n");
-	printf("----------------------------------------------------------------\n");
-	for(int i = 0; i < ap_num; i++)
-		ap_records[i].toString();
-	printf("----------------------------------------------------------------\n");
-
-	// infinite loop
-	xTaskCreate(&loop_task, "loop_task", 2048, NULL, 5, NULL);
-}
-
-
+//Class used to define callback to call along with specific WiFi events
 class MyEventHandler: public WiFiEventHandler {
 	/* The event handler provides over-rides for:
 	virtual esp_err_t apStaConnected(system_event_ap_staconnected_t info);
@@ -67,14 +61,13 @@ class MyEventHandler: public WiFiEventHandler {
 	}
 };
 
-
 void app_main(void)
 {
 	//PRINT DEBUG LOG
 	esp_log_level_set("*", ESP_LOG_DEBUG);
 
-	/* setup */
-	WiFi wifi = WiFi(); //calling init inside the constructor (RAII)
+	//SETUP WIFI
+	WiFi wifi = WiFi(); //calling WiFi::init inside the constructor (RAII)
 	wifi.setWifiEventHandler(new MyEventHandler());
 
 	//connect to WIFI_SSID network
