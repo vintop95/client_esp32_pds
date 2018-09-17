@@ -13,9 +13,32 @@ Nonostante sia consigliato l'utilizzo di Eclipse, consiglio l'uso di Visual Stud
   * https://github.com/VirgiliaBeatrice/esp32-devenv-vscode/blob/master/tutorial.md
   * https://www.youtube.com/watch?v=VPgEc8FUiqI
 
+### Configurazione Client
+- ```make menuconfig``` e:
+	- modificare interfaccia USB della scheda
+	- Attivare gestione errori c++
+- Nel file ```main.h``` modificare i seguenti parametri:  
+```
+#define WIFI_SSID [TUA_SSID]
+#define WIFI_PASS [TUA_PASSWORD]
+#define SERVER_IP [IP_DEL_SERVER_NELLA_LAN]
+```
+Per convenzione la porta di ascolto del server è 7856
+
+### Configurazione Server
+Ci sono due modi per testare il client con un server:
+1. usa netcat, permette di inviare e ricevere da riga di comando i messaggi nella socket TCP:  
+nella repo è presente la cartella netcat-1.11, eseguire ./nc.exe da linea di comando come segue:  
+- apri powershell 
+crea server:
+	- ./nc.exe -L -p nPorta  
+client:  
+	- ./nc.exe ip nPorta  
+2. usa il server di prova: https://github.com/vintop95/server_esp_test
+
 ### Procedura compilazione da terminale
 1. apri mingw32
-2. cd ~/esp/hello_world  
+2. cd d(lettera disco)/[percorso_proj]/esp32_pds  
 2a. (opzionale) make menuconfig
 3. make flash
 4. make monitor (oppure usare PuTTy)
@@ -88,7 +111,7 @@ Manuale per ESP32, di particolare importanza la sezione delle librerie C++ aggiu
 Le seguenti classi sono prelevate da https://github.com/nkolban/esp32-snippets/tree/master/cpp_utils  
 (Alcune hanno subito una leggera modifica per migliorare l'integrazione con il progetto)
 
-```Wifi.h```  
+```WiFi.h```  
 Classe che semplifica l'interfaccia offerta dal sistema ESP32 per la gestione del WiFi  
 Errore 'err_t' does not name a type: https://github.com/espressif/esp-idf/issues/2392
 aggiungere a dns.h
@@ -98,7 +121,7 @@ aggiungere a dns.h
 #endif
 ```
 
-```WifiEventHandler.h```  
+```WiFiEventHandler.h```  
 Classe di supporto a ```Wifi.h``` per la definizione di callback da chiamare all'avvenire di certi eventi riguardanti l'interfaccia WiFi
 
 ```FreeRTOSTimer.h```  
