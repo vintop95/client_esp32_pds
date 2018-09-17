@@ -5,6 +5,8 @@
 - Giorgio Pizzuto
 - Vincenzo Topazio
 
+**Server ESP32**: https://github.com/vintop95/server_esp32_pds
+
 ## Configurazione ambiente di sviluppo
 * **Tutorial base**: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
 * **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
@@ -35,6 +37,7 @@ crea server:
 client:  
 	- ./nc.exe ip nPorta  
 2. usa il server di prova: https://github.com/vintop95/server_esp_test
+3. (ancora non funzionante) parte server: https://github.com/vintop95/server_esp32_pds
 
 ### Procedura compilazione da terminale
 1. apri mingw32
