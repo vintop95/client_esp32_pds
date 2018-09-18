@@ -1,10 +1,10 @@
 TLDR:
+Copia nc.exe in Windows o Windows\system32
+	apri linea di comando
 crea server:
-	apri powershell
-	./nc.exe -L -p nPorta
-	
+	nc -L -p nPorta
 client:
-	./nc.exe ip nPorta
+	nc ip nPorta
 
 VERSIONE FULL:
 UPDATE 12/27/04 security fix in -e option for Windows
