@@ -30,12 +30,13 @@ Per convenzione la porta di ascolto del server è 7856
 ### Configurazione Server
 Ci sono due modi per testare il client con un server:
 1. usa netcat, permette di inviare e ricevere da riga di comando i messaggi nella socket TCP:  
-nella repo è presente la cartella netcat-1.11, eseguire ./nc.exe da linea di comando come segue:  
-- apri powershell   
+nella repo è presente la cartella netcat-1.11, fare come segue:  
+Copia nc.exe in Windows o Windows\system32
+	apri linea di comando
 crea server:
-	- ./nc.exe -L -p nPorta  
-client:  
-	- ./nc.exe ip nPorta  
+	nc -L -p nPorta
+client:
+	nc ip nPorta 
 2. usa il server di prova: https://github.com/vintop95/server_esp_test
 3. (ancora non funzionante) parte server: https://github.com/vintop95/server_esp32_pds
 
