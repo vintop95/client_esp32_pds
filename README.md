@@ -9,7 +9,8 @@
 
 ## Configurazione ambiente di sviluppo
 * **Tutorial base**: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
-* **DOWNLOAD MSYS2 GIÀ PRONTO**: https://ufile.io/q8zab
+* **DOWNLOAD MSYS2 GIÀ PRONTO**: https://ufile.io/q8zab  
+MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC
 * **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
 * **IDE**: Nonostante sia consigliato l'utilizzo di Eclipse, consiglio l'uso di Visual Studio Code poiché offre un terminale integrato semplice da gestire e inoltre offre l'IntelliSense facile da impostare
 * **Tutorial VS CODE**:
