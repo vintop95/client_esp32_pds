@@ -82,6 +82,14 @@ void tcp_test(void){
 	}
 }
 
+//VT: Empty infinite task -> callback for xTaskCreate api function
+void loop_task(void *pvParameter)
+{
+    while(1) { 
+		vTaskDelay(1000 / portTICK_RATE_MS);		
+    }
+}
+
 void wifi_scan(WiFi wifi){
 	auto ap_records = wifi.scan();
 	int ap_num = ap_records.size();

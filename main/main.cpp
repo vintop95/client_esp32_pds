@@ -24,14 +24,6 @@
 //Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
 
-//VT: Empty infinite task -> callback for xTaskCreate api function
-void loop_task(void *pvParameter)
-{
-    while(1) { 
-		vTaskDelay(1000 / portTICK_RATE_MS);		
-    }
-}
-
 //Class used to define callback to call along with specific WiFi events
 class MyEventHandler: public WiFiEventHandler {
 	/* The event handler provides over-rides for:
