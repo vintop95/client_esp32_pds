@@ -29,11 +29,9 @@ void callback(FreeRTOSTimer *pTimer);
  * @return String of packet type.
  */
 Sniffer::Sniffer(Sender* sndr):
-timer("listenTimer",
+timer((char*)"listenTimer",
       pdMS_TO_TICKS(sndr->getListenPeriod()),
-      pdTRUE,
-      sndr,
-      callback)
+      pdTRUE, sndr, &callback)
 {  
     pSender = sndr;
 }
