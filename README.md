@@ -8,10 +8,16 @@
 **Server ESP32**: https://github.com/vintop95/server_esp32_pds
 
 ## Configurazione ambiente di sviluppo
-* **Tutorial base**: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html
-* **DOWNLOAD MSYS2 GIÀ PRONTO**: https://ufile.io/q8zab  
-MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC
 * **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
+* **DOWNLOAD MSYS2 GIÀ PRONTO**: https://ufile.io/q8zab  
+MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC  
+	- Copiare la cartella in ```C:```
+	- Avviare ```mingw32.exe``` la prima volta e modificare in ```C:\msys32\home``` la cartella "vince" con il nome della cartella utente appena generata
+	- Modificare ```C:\msys32\etc\profile.d\export_idf_path.sh``` sostituendo il path con il tuo nome utente (al posto di ```vince```)
+* **Tutorial base**: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html  
+	- ATTENZIONE, saltare la parte di configurazione di msys32 nel tutorial e andare direttamente alla configurazione del progetto ```hello-world```  
+	- Prima di effettuare ```make menuconfig```, fai ```make clean``` per eliminare i vecchi riferimenti
+	- Fai ```make menuconfig``` e nell'interfaccia seleziona ```Serial flasher config``` e modifica la porta in ```COMn``` (vedi in gestione dispositivi dopo installazione driver)
 * **IDE**: Nonostante sia consigliato l'utilizzo di Eclipse, consiglio l'uso di Visual Studio Code poiché offre un terminale integrato semplice da gestire e inoltre offre l'IntelliSense facile da impostare
 * **Tutorial VS CODE**:
   * https://github.com/VirgiliaBeatrice/esp32-devenv-vscode/blob/master/tutorial.md
@@ -43,11 +49,11 @@ client:
 3. (ancora non funzionante) parte server: https://github.com/vintop95/server_esp32_pds
 
 ### Procedura compilazione da terminale
-1. apri mingw32
-2. cd d(lettera disco)/[percorso_proj]/esp32_pds  
-2a. (opzionale) make menuconfig
-3. make flash
-4. make monitor (oppure usare PuTTy)
+1. apri ```mingw32.exe```
+2. ```cd /d(lettera disco)/[percorso_proj]/esp32_pds```  
+2a. (opzionale) ```make menuconfig```
+3. ```make flash```
+4. ```make monitor``` (oppure usare PuTTy)
 
 ### Errori noti
 Problemi con l'installazione di python:  
