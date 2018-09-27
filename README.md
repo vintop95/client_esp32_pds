@@ -52,7 +52,7 @@ client:
 1. apri ```mingw32.exe```
 2. ```cd /d(lettera disco)/[percorso_proj]/esp32_pds```  
 2a. (opzionale) ```make menuconfig```
-3. ```make flash```
+3. ```make flash``` (oppure ```make app``` per compilare e non flashare)  
 4. ```make monitor``` (oppure usare PuTTy)
 
 ### Errori noti
