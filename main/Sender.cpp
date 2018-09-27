@@ -10,9 +10,19 @@
 static const char* LOG_TAG = "Sender";
 
 /**
+ * @brief Prototype of callback defined at the end of the file
+ */
+void callback(FreeRTOSTimer *pTimer);
+
+/**
  * @brief Sender constructor
  */
-Sender::Sender(Server* srv, int ms): msListenPeriod(ms), server(srv){
+Sender::Sender(Server* srv, int ms): msListenPeriod(ms), 
+    timer((char*)"listenTimer",
+    pdMS_TO_TICKS(msListenPeriod),
+    pdTRUE, this, &callback),
+    server(srv)
+{
     //maybe using a task is not the best way
     //but if we need to, here is the functions needed
     //t->setName("Sender");
@@ -75,3 +85,32 @@ int Sender::sendRecordsToServer(){
 void Sender::push_back(Record r){
     records.push_back(r);
 }
+
+/**
+ * @brief Starts the timer.
+ */
+void Sender::start_timer(){
+	timer.start();
+}
+
+/**
+ * @brief Callback called by the Timer.
+ *
+ * @param Pointer to the Timer Object
+ * 
+ * @return N/A.
+ */
+void callback(FreeRTOSTimer *pTimer) {
+    //TODO: Ho commentato le linee set_promiscous
+    //perché causavano malfunzionamenti
+
+    Sender* pSender = (Sender *)pTimer->getData();
+    //esp_wifi_set_promiscuous(false);
+
+    printf("%d\n", pSender->getListenPeriod());
+
+    pSender->sendRecordsToServer();
+    //cout << "Timer scaduto";
+    //esp_wifi_set_promiscuous(true);
+}
+

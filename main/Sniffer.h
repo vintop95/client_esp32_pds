@@ -29,7 +29,6 @@ extern Sender* pSender;
  */
 class Sniffer {
 private:
-    FreeRTOSTimer timer;
     void wifi_sniffer_loop_channels();
     friend void wifi_sniffer_packet_handler(void*, 
                 wifi_promiscuous_pkt_type_t);

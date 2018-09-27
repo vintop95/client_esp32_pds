@@ -17,21 +17,13 @@ static const char* LOG_TAG = "Sniffer";
 Sender* pSender;
 
 /**
- * @brief Prototype of callback defined at the end of the file
- */
-void callback(FreeRTOSTimer *pTimer);
-
-/**
  * @brief Sniffer constructor
  * 
  * @param Sender object used by the sniffer to send Records
  * 
  * @return String of packet type.
  */
-Sniffer::Sniffer(Sender* sndr):
-timer((char*)"listenTimer",
-      pdMS_TO_TICKS(sndr->getListenPeriod()),
-      pdTRUE, sndr, &callback)
+Sniffer::Sniffer(Sender* sndr)
 {  
     pSender = sndr;
 }
@@ -67,37 +59,37 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
   switch(type)
   {
     case WIFI_PKT_MGMT:
-      switch(subtype)
-      {
-    	   case ASSOCIATION_REQ:
-         return "Mgmt: Association request";
-         case ASSOCIATION_RES:
-         return "Mgmt: Association response";
-         case REASSOCIATION_REQ:
-         return "Mgmt: Reassociation request";
-         case REASSOCIATION_RES:
-         return "Mgmt: Reassociation response";
-         case PROBE_REQ:
-         return "MGMT:PROBE_REQ";
-         case PROBE_RES:
-         return "Mgmt: Probe response";
-         case BEACON:
-         return "Mgmt: Beacon frame";
-         case ATIM:
-         return "Mgmt: ATIM";
-         case DISASSOCIATION:
-         return "Mgmt: Dissasociation";
-         case AUTHENTICATION:
-         return "Mgmt: Authentication";
-         case DEAUTHENTICATION:
-         return "Mgmt: Deauthentication";
-         case ACTION:
-         return "Mgmt: Action";
-         case ACTION_NACK:
-         return "Mgmt: Action no ack";
+    switch(subtype)
+    {
+        case ASSOCIATION_REQ:
+        return "Mgmt: Association request";
+        case ASSOCIATION_RES:
+        return "Mgmt: Association response";
+        case REASSOCIATION_REQ:
+        return "Mgmt: Reassociation request";
+        case REASSOCIATION_RES:
+        return "Mgmt: Reassociation response";
+        case PROBE_REQ:
+        return "MGMT:PROBE_REQ";
+        case PROBE_RES:
+        return "Mgmt: Probe response";
+        case BEACON:
+        return "Mgmt: Beacon frame";
+        case ATIM:
+        return "Mgmt: ATIM";
+        case DISASSOCIATION:
+        return "Mgmt: Dissasociation";
+        case AUTHENTICATION:
+        return "Mgmt: Authentication";
+        case DEAUTHENTICATION:
+        return "Mgmt: Deauthentication";
+        case ACTION:
+        return "Mgmt: Action";
+        case ACTION_NACK:
+        return "Mgmt: Action no ack";
     	default:
         return "Mgmt: Unsupported/error";
-      }
+    }
 
     case WIFI_PKT_CTRL:
     return "Control";
@@ -256,7 +248,7 @@ void Sniffer::init(){
 void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = 1;
 
-    timer.start();
+    pSender->start_timer();
     Record r;
     r.sender_mac = "";
     r.timestamp = 0;
@@ -272,26 +264,9 @@ void Sniffer::wifi_sniffer_loop_channels(){
         vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
         //esp_wifi_set_promiscuous(false);
         esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
         //esp_wifi_set_promiscuous(true);
         channel = (channel % WIFI_CHANNEL_MAX) + 1;
     }
 
 }
 
-/**
- * @brief Callback called by the Timer.
- *
- * @param Pointer to the Timer Object
- * 
- * @return N/A.
- */
-void callback(FreeRTOSTimer *pTimer) {
-    //TODO: Ho commentato le linee set_promiscous
-    //perché causavano malfunzionamenti
-
-    //esp_wifi_set_promiscuous(false);
-    pSender->sendRecordsToServer();
-    //cout << "Timer scaduto";
-    //esp_wifi_set_promiscuous(true);
-}

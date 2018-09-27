@@ -34,6 +34,7 @@ private:
     //Period of time in which ESP32 sniffs packets expressed in milliseconds
     int msListenPeriod;
     std::vector<Record> records;
+    FreeRTOSTimer timer;
 public:
     Server* server;
     Sender(Server* srv, int ms);
@@ -42,7 +43,9 @@ public:
         return msListenPeriod;
     }
     void push_back(Record r);
+    void start_timer();
     friend void to_json(json& j, const Record& r);
+
 };
 
 #endif 
