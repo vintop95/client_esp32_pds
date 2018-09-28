@@ -112,6 +112,16 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
  */
 extern void to_json(json& j, const Record& r);
 
+// Task to be created.
+ void vTaskCode( void * pvParameters )
+ {
+     pSender->sendRecordsToServer();
+     vTaskDelete(NULL);
+     while(true){
+
+     }
+ }
+
 /**
  * @brief Callback that handles the sniffed packet
  * It must push back to the list of records the following fields:
@@ -199,26 +209,11 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
-    //TODO: decommentare se si vuole inviare il record immediatamente
-    //json j = r;
+    
     //pSender->server->sendData(j);
 
-    //// Non serve, ma se servisse bisogna considerare il fatto che addr4[6] 
-    //// non è piu nella struttura wifi_ieee80211_mac_hdr_t
-    // if (frame_ctrl->type == WIFI_PKT_MGMT && frame_ctrl->subtype == BEACON)
-    // {
-    //     const wifi_mgmt_beacon_t *beacon_frame = (wifi_mgmt_beacon_t*) ipkt->payload;
-    //     char ssid[32] = {0};
-    //     if (beacon_frame->tag_length >= 32)
-    //     {
-    //         strncpy(ssid, beacon_frame->ssid, 31);
-    //     }
-    //     else
-    //     {
-    //         strncpy(ssid, beacon_frame->ssid, beacon_frame->tag_length);
-    //     }
-    //     printf(",SSID=%s", ssid);
-    // }
+    TaskHandle_t xHandle;
+    xTaskCreate( vTaskCode, "NAME", 10000, (void*) 1, tskIDLE_PRIORITY, &xHandle );
 
     printf("\n");
 }
@@ -249,15 +244,6 @@ void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = 1;
 
     pSender->start_timer();
-    Record r;
-    r.sender_mac = "";
-    r.timestamp = 0;
-    r.rssi = 0;
-    r.ssid = "";
-    //pSender->server->send(r);
-    for(int i=0;i<50;++i){
-        pSender->push_back(r);
-    }
     
     while (true) {
         //VT: loop all channels

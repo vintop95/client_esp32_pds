@@ -90,7 +90,7 @@ void Sender::push_back(Record r){
  * @brief Starts the timer.
  */
 void Sender::start_timer(){
-	timer.start();
+	//timer.start();
 }
 
 /**

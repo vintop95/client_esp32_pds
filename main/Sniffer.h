@@ -9,6 +9,7 @@
 #define SNIFFER_H_
 
 #include "main.h"
+#include "Task.h"
 
 #include "Sender.h"
 
