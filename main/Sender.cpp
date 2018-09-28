@@ -48,6 +48,8 @@ void to_json(json& j, const Record& r) {
 
 /**
  * @brief It sends the records to the server
+ * This function works together with 'ClientHandler::readyRead()' function
+ * in the server
  * 
  * @return 0 if all went well, otherwise a number != 0
  */
@@ -64,10 +66,8 @@ int Sender::sendRecordsToServer(){
         return -1;
     }
 
-    for(auto r: records){
-        j = r;
-        server->sendData(j);
-    }
+    j = records;
+    server->sendData(j);
     res = server->waitAck();
 
     server->sendEnd();
