@@ -57,6 +57,7 @@ int Sender::sendRecordsToServer(){
     
     ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
 
+    //esp_wifi_set_promiscuous(false);
     res = server->connect();
 
     if (res != 0){
@@ -71,7 +72,7 @@ int Sender::sendRecordsToServer(){
 
     server->sendEnd();
     server->close();
-
+    //esp_wifi_set_promiscuous(true);
     return res;
 }
 
@@ -107,9 +108,8 @@ void callback(FreeRTOSTimer *pTimer) {
     Sender* pSender = (Sender *)pTimer->getData();
     //esp_wifi_set_promiscuous(false);
 
-    printf("%d\n", pSender->getListenPeriod());
-
     pSender->sendRecordsToServer();
+
     //cout << "Timer scaduto";
     //esp_wifi_set_promiscuous(true);
 }

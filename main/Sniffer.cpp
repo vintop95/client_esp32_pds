@@ -249,9 +249,9 @@ void Sniffer::wifi_sniffer_loop_channels(){
     while (true) {
         //VT: loop all channels
         vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
-        //esp_wifi_set_promiscuous(false);
-        esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-        //esp_wifi_set_promiscuous(true);
+        
+        // esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
+
         channel = (channel % WIFI_CHANNEL_MAX) + 1;
     }
 

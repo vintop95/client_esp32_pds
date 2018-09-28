@@ -24,6 +24,8 @@
 //Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
 
+WiFi* pWifi;
+
 //Class used to define callback to call along with specific WiFi events
 class MyEventHandler: public WiFiEventHandler {
 	/* The event handler provides over-rides for:
@@ -44,13 +46,14 @@ class MyEventHandler: public WiFiEventHandler {
 
 	virtual esp_err_t staGotIp(system_event_sta_got_ip_t e){
 		//xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGD(LOG_TAG, "got IP! Connected bit set");
+		ESP_LOGD(LOG_TAG, "got IP!");
     	return ESP_OK;
 	}
 
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGD(LOG_TAG, "disconnected! Connected bit cleared");
+		ESP_LOGD(LOG_TAG, "disconnected! Retrying to reconnect...");
+		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
     	return ESP_OK;
 	}
 };
@@ -62,6 +65,7 @@ void app_main(void)
 
 	//SETUP WIFI
 	WiFi wifi = WiFi(); //calling WiFi::init inside the constructor (RAII)
+	pWifi = &wifi;
 	wifi.setWifiEventHandler(new MyEventHandler());
 
 	//connect to WIFI_SSID network
