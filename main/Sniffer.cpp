@@ -112,7 +112,7 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
  */
 extern void to_json(json& j, const Record& r);
 
-// Task to be created.
+// TASK PER INVIO RECORD A SERVER
  void vTaskCode( void * pvParameters )
  {
      pSender->sendRecordsToServer();
@@ -212,8 +212,9 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     
     //pSender->server->sendData(j);
 
-    TaskHandle_t xHandle;
-    xTaskCreate( vTaskCode, "NAME", 10000, (void*) 1, tskIDLE_PRIORITY, &xHandle );
+    // THIS NEEDED IF YOU WANT TO SEND IMMEDIATELY (NOT WORKING PROPERLY)
+    //TaskHandle_t xHandle;
+    //xTaskCreate( vTaskCode, "NAME", 10000, (void*) 1, tskIDLE_PRIORITY, &xHandle );
 
     printf("\n");
 }
