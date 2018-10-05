@@ -16,12 +16,16 @@ MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC
 	- Modificare ```C:\msys32\etc\profile.d\export_idf_path.sh``` sostituendo il path con il tuo nome utente (al posto di ```vince```)
 * **Tutorial base**: https://docs.espressif.com/projects/esp-idf/en/latest/get-started/index.html  
 	- ATTENZIONE, saltare la parte di configurazione di msys32 nel tutorial e andare direttamente alla configurazione del progetto ```hello-world```  
+	SE SI VUOLE PROSEGUIRE CON L'INSTALLAZIONE IN MODO CLASSICO, USARE pacman PER INSTALLARE PYTHON (Come Giuseppe può spiegare)
 	- Prima di effettuare ```make menuconfig```, fai ```make clean``` per eliminare i vecchi riferimenti
 	- Fai ```make menuconfig``` e nell'interfaccia seleziona ```Serial flasher config``` e modifica la porta in ```COMn``` (vedi in gestione dispositivi dopo installazione driver)
 * **IDE**: Nonostante sia consigliato l'utilizzo di Eclipse, consiglio l'uso di Visual Studio Code poiché offre un terminale integrato semplice da gestire e inoltre offre l'IntelliSense facile da impostare
 * **Tutorial VS CODE**:
   * https://github.com/VirgiliaBeatrice/esp32-devenv-vscode/blob/master/tutorial.md
   * https://www.youtube.com/watch?v=VPgEc8FUiqI
+  * ERRORE INCLUSIONE INTELLISENSE: https://github.com/Microsoft/vscode-cpptools/issues/743  
+  	AGGIUNGERE RIGA ``` "C_Cpp.intelliSenseEngine": "Tag Parser" ``` A USER SETTINGS
+  	
 
 ### Configurazione Client
 - ```make menuconfig``` e:
@@ -37,7 +41,7 @@ Per convenzione la porta di ascolto del server è 7856
 
 ### Configurazione Server
 Ci sono due modi per testare il client con un server:
-1. usa netcat, permette di inviare e ricevere da riga di comando i messaggi nella socket TCP:  
+1. usa netcat, permette di inviare e ricevere da riga di comando i messaggi nella socket TCP come telnet:  
 nella repo è presente la cartella netcat-1.11, fare come segue:  
 Copia nc.exe in Windows o Windows\system32
 	apri linea di comando
