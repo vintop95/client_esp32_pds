@@ -4,3 +4,6 @@ build/
 # Ignore intellisense configuration
 .vscode/c_cpp_properties.json
 
+# Ignore menuconfig
+sdkconfig
+
