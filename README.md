@@ -31,13 +31,8 @@ MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC
 - ```make menuconfig``` e:
 	- modificare interfaccia USB della scheda
 	- Attivare gestione errori c++
-- Nel file ```main.h``` modificare i seguenti parametri:  
-```
-#define WIFI_SSID [TUA_SSID]
-#define WIFI_PASS [TUA_PASSWORD]
-#define SERVER_IP [IP_DEL_SERVER_NELLA_LAN]
-```
-Per convenzione la porta di ascolto del server è 7856
+	- Personalizzare i parametri dell'app (WiFi - Server Connection Configuration)  
+- Per convenzione la porta di ascolto del server è 7856
 
 ### Configurazione Server
 Ci sono due modi per testare il client con un server:
@@ -49,8 +44,9 @@ crea server:
 	nc -L -p nPorta
 client:
 	nc ip nPorta 
-2. usa il server di prova: https://github.com/vintop95/server_esp_test
-3. (ancora non funzionante) parte server: https://github.com/vintop95/server_esp32_pds
+2. parte server: https://github.com/vintop95/server_esp32_pds
+3. usa il server di prova: https://github.com/vintop95/server_esp_test
+
 
 ### Procedura compilazione da terminale
 1. apri ```mingw32.exe```
@@ -99,16 +95,14 @@ Gestisce l'interfaccia di comunicazione con il server che ha il compito di elabo
 L'invio avviene mediante il protocollo definito di seguito:  
 	Client:  
 	- "INIT [jSON dei dati di inizializzazione]": primo messaggio inviato al server per comunicare il nome del dispositivo esp32  
-	- "DATA [jSON dei Record raccolti]": messaggio contenente i Record raccolti  
+	- "DATA [jSON dell'array di Record raccolti nel periodo]": messaggio contenente i Record raccolti  
+	- "END": chiudi la connessione
 	Server:  
-	- "OK": comunicazione ricevuta correttamente (per adesso solo dopo l'invio del messaggio INIT)  
+	- "OK": comunicazione ricevuta correttamente  
 	- "ERR": errore di ricezione  
 	
 Ogni listenPeriod la sezione del sistema operativo FreeRTOS dedicata al timer chiamerà una callback contenente la funzione che gestisce l'invio dei Record accumulati durante il listenPeriod  
 Sembra più comodo avviare una nuova connessione TCP ogni listenPeriod anziché avviarla una volta sola e lasciarla attiva, ispirandosi al principio di protocollo stateless HTML  
-Il protocollo è da perfezionare, in particolare:  
-	- Considerare l'introduzione di un messaggio END per terminare la comunicazione  
-	- Eventuali modifiche per il miglioramento delle prestazioni  
 ### Sender
 Gestisce la raccolta e l'invio dei Record usando l'interfaccia offerta da Server 
 ### Record
@@ -178,32 +172,15 @@ File contenente le definizioni dei "task" offerti da Visual Studio Code per la v
 
 ```sdkconfig```  
 File contenente i parametri di configurazione impostabili con ```make menuconfig```
+EDIT: rimosso poiché contiene configurazioni locali, lasciata una copia
 
 
 # Ulteriori informazioni
 ### Videolezione del progetto
 LEZIONE 24 2017/18
-https://video.polito.it/dl/ad1eec5c99f6f41650c415ac15604a74/5b9fece3/2018/2018_02GRSOV_0219089/Programmazione_di_sistema_lez_24/Programmazione_di_sistema_lez_24.mp4
 
 ### Shortcuts for rapid compilation
 - F4: flash app
 - F5: build app
 - F8: clean app
 - F12: menuconfig
-
-### Configure the project
-```
-make menuconfig
-```
-
-* Set serial port under Serial Flasher Options.
-
-### Build and Flash
-Build the project and flash it to the board, then run monitor tool to view serial output:
-
-```
-make flash //fa il build dell'applicazione e la flasha nella scheda
-make monitor //avvia l'interfaccia seriale con la scheda
-```
-
-(To exit the serial monitor, type ``Ctrl-]`` (nel layout italiano ] corrisponde al tasto +) .)
