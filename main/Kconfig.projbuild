@@ -1,5 +1,10 @@
 menu "WiFi Connection Configuration"
 
+config DEVICE_NAME
+    string "Device Name"
+    help
+	Name of the device.
+
 config ESP_WIFI_SSID
     string "WiFi SSID"
     help
@@ -14,4 +19,9 @@ config MAX_STA_CONN
     int "Maximal STA connections"
     help
 	Max number of the STA connects to AP.
+
+config SERVER_IP
+    string "Server IP Address"
+    help
+	IP address of the serverP.  
 endmenu
