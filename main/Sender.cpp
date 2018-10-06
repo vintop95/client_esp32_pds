@@ -67,6 +67,8 @@ int Sender::sendRecordsToServer(){
     }
 
     j = records;
+    records.clear();
+
     server->sendData(j);
     res = server->waitAck();
 

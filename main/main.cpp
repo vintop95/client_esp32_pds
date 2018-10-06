@@ -50,14 +50,23 @@ class MyEventHandler: public WiFiEventHandler {
     	return ESP_OK;
 	}
 
+	// TODO: LIMITARE IL NUMERO DI TENTATIVI DI RICONNESSIONE
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
 		ESP_LOGD(LOG_TAG, "disconnected! Retrying to reconnect...");
-		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
+		while(!pWifi->isConnectedToAP()){
+			pWifi->connectAP(WIFI_SSID, WIFI_PASS);
+			vTaskDelay(5000 / portTICK_RATE_MS);
+		}
+		
     	return ESP_OK;
 	}
 };
 
+/**
+ * @todo: aggiungere sincronizzazione tempo con server
+ * 
+ */
 void app_main(void)
 {
 	//PRINT DEBUG LOG

@@ -13,6 +13,8 @@
 
 #include "Sender.h"
 
+#include <hwcrypto/sha.h>
+
 #define	WIFI_CHANNEL_MAX		        (13)
 #define	WIFI_CHANNEL_SWITCH_INTERVAL	(500)
 
@@ -82,7 +84,7 @@ typedef struct {
  */
 typedef struct {
 	wifi_ieee80211_mac_hdr_t hdr;
-	uint8_t payload[0]; /* network data ended with 4 bytes csum (CRC32) */
+	uint8_t payload[0]; /* network data ended with 4 bytes csum (CRC32) - originally uint8_t*/
 } wifi_ieee80211_packet_t;
 
 /**

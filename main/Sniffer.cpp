@@ -112,15 +112,15 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
  */
 extern void to_json(json& j, const Record& r);
 
-// TASK PER INVIO RECORD A SERVER
- void vTaskCode( void * pvParameters )
- {
-     pSender->sendRecordsToServer();
-     vTaskDelete(NULL);
-     while(true){
-
-     }
- }
+// printing bits of number for debugging
+void printBits(unsigned num)
+{
+   for(int bit=0;bit<(sizeof(unsigned) * 8); bit++)
+   {
+      printf("%i ", num & 0x01);
+      num = num >> 1;
+   }
+}
 
 /**
  * @brief Callback that handles the sniffed packet
@@ -172,15 +172,43 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     mac2str(hdr->addr2, addr2);//SENDER
     mac2str(hdr->addr3, addr3);//FILTERING
 
+    // Size of the packet
+    /**< length of packet including Frame Check Sequence(FCS) - 12 bit field*/
+        
+    // printf("PACKET SIZE IN BITS: \n");
+    // printBits(ppkt->rx_ctrl.sig_len);
+    // printf("\n");
+
+    unsigned short pkt_size_short = (ppkt->rx_ctrl.sig_len << 4) | (ppkt->rx_ctrl.sig_len >> 8);
+    int pkt_size = (int)pkt_size_short;
+    printf("PACKET SIZE: %hu B \n", pkt_size);
+    
+    pkt_size -= sizeof(wifi_ieee80211_mac_hdr_t) - 4;
+    printf("PAYLOAD SIZE WITHOUT CRC32: %hu B \n", pkt_size);
+
     //json structure to send
-    //TODO: da correggere
     Record r;
     r.sender_mac = addr2;
     r.timestamp = ppkt->rx_ctrl.timestamp;
     r.rssi = ppkt->rx_ctrl.rssi;
-    //TODO: inserire correttamente payload del pacchetto
-    //r.hashed_pkt = ipkt->payload;
     r.ssid = "";
+
+    printf("payload:\n");
+    for(int i=0; i<pkt_size; ++i){
+        printf("%02x ", (unsigned char)ipkt->payload[i]);
+    }
+
+    // USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
+    uint8_t shaData[20];
+    esp_sha(SHA1, (const unsigned char*)ipkt->payload, pkt_size, shaData);
+
+    for(int i=0; i<20; ++i){
+        printf("%02x ", shaData[i]);
+    }
+    printf("\n");
+
+    // TODO: not working
+    // r.hashed_pkt = (const char) shaData[0];
 
 	printf("%d %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
         /**< timestamp. The local time when this packet is received. 
@@ -209,14 +237,6 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
-    
-    //pSender->server->sendData(j);
-
-    // THIS NEEDED IF YOU WANT TO SEND IMMEDIATELY (NOT WORKING PROPERLY)
-    //TaskHandle_t xHandle;
-    //xTaskCreate( vTaskCode, "NAME", 10000, (void*) 1, tskIDLE_PRIORITY, &xHandle );
-
-    printf("\n");
 }
 
 /**
@@ -228,8 +248,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 void Sniffer::init(){
     esp_wifi_set_promiscuous(true);
     ESP_LOGI(LOG_TAG, "initialized: setting sniffed packet handler callback\n");
-    //TODO: commentare per testare l'invio di pacchetti
-    //senza poter riceverne
+    // Sets callback for handling packet received
     esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
     wifi_sniffer_loop_channels();
 }
@@ -247,7 +266,7 @@ void Sniffer::wifi_sniffer_loop_channels(){
     pSender->start_timer();
     
     while (true) {
-        //VT: loop all channels
+        // loop all channels
         vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
         
         // IT CHANGES CHANNEL, DISABLED BECAUSE OF CONFLICTS WITH SENDING TO THE SERVER

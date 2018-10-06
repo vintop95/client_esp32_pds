@@ -164,10 +164,11 @@ int Server::waitAck(){
 		for(int i = 0; i < r; i++) {
 			putchar(recv_buf[i]);
 		}
-		printf("\n");
 		if(eqStr(recv_buf,"OK")){
+			ESP_LOGI(LOG_TAG, "SERVER ACK IS OK");
 			return 0;
 		}else{
+			ESP_LOGE(LOG_TAG, "THERE WAS A PROBLEM IN THE SENDING");
 			return -1;
 		}
 	} while(r > 0);	

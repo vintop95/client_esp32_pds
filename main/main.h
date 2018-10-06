@@ -8,6 +8,8 @@
 #ifndef MAIN_H_
 #define MAIN_H_
 
+// ISSUE INTELLISENSE NOT WORKING
+// https://github.com/Microsoft/vscode-cpptools/issues/743
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
