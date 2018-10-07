@@ -1,4 +1,4 @@
-menu "WiFi Connection Configuration"
+menu "WiFi - Server Connection Configuration"
 
 config DEVICE_NAME
     string "Device Name"
@@ -14,11 +14,6 @@ config ESP_WIFI_PASSWORD
     string "WiFi Password"
     help
 	WiFi password (WPA or WPA2) for the example to use.
-		
-config MAX_STA_CONN
-    int "Maximal STA connections"
-    help
-	Max number of the STA connects to AP.
 
 config SERVER_IP
     string "Server IP Address"
