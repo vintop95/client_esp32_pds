@@ -175,8 +175,12 @@ File contenente i parametri di configurazione impostabili con ```make menuconfig
 EDIT: rimosso poiché contiene configurazioni locali, lasciata una copia
 
 ## DA FARE
-SNTP (sincronizzazione timestamp): https://github.com/espressif/esp-idf/blob/master/examples/protocols/sntp/README.md
-struttura esterna pacchetti spiegata: https://github.com/espressif/esp-idf/issues/1751
+- SNTP (sincronizzazione timestamp): https://github.com/espressif/esp-idf/blob/master/examples/protocols/sntp/README.md  
+- struttura esterna pacchetti spiegata: https://github.com/espressif/esp-idf/issues/1751  
+- PROBLEMA RICONESSIONE DOPO AVER STACCATO WIFI:  
+E (52291) FreeRTOS: Semaphore NOT taken:  name: ConnectFinished (0x3ffbeea8), owner: connectAP  
+D (52291) WiFi: esp_wifi_connect  
+
 
 # Ulteriori informazioni
 ### Videolezione del progetto
