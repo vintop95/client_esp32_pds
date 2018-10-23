@@ -176,6 +176,7 @@ EDIT: rimosso poiché contiene configurazioni locali, lasciata una copia
 
 ## DA FARE
 SNTP (sincronizzazione timestamp): https://github.com/espressif/esp-idf/blob/master/examples/protocols/sntp/README.md
+struttura esterna pacchetti spiegata: https://github.com/espressif/esp-idf/issues/1751
 
 # Ulteriori informazioni
 ### Videolezione del progetto
