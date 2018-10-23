@@ -174,6 +174,8 @@ File contenente le definizioni dei "task" offerti da Visual Studio Code per la v
 File contenente i parametri di configurazione impostabili con ```make menuconfig```
 EDIT: rimosso poiché contiene configurazioni locali, lasciata una copia
 
+## DA FARE
+SNTP (sincronizzazione timestamp): https://github.com/espressif/esp-idf/blob/master/examples/protocols/sntp/README.md
 
 # Ulteriori informazioni
 ### Videolezione del progetto
