@@ -108,7 +108,7 @@ static void obtain_time(void)
     }
 }
 
-void set_time(){
+void set_time(unsigned time_elapsed){
 	time_t now;
     struct tm timeinfo;
     time(&now);
@@ -127,11 +127,9 @@ void set_time(){
 	strftime(timeString, sizeof(timeString), "%FT%TZ", ptm);
 	printf("time set to: %s", timeString);
 
-	struct timeval tv;
-    gettimeofday(&tv, NULL);
 
 	// TODO: modo grezzo di ottenere il boot time, usare API
-	boot_time = now;
+	boot_time = now - time_elapsed;
 }
 
 /**
@@ -148,6 +146,9 @@ void app_main(void)
 
 	//SETUP WIFI
 	WiFi wifi = WiFi(); //calling WiFi::init inside the constructor (RAII)
+
+	unsigned time1 = xTaskGetTickCount()*portTICK_RATE_MS/1000;
+
 	pWifi = &wifi;
 	wifi.setWifiEventHandler(new MyEventHandler());
 
@@ -155,7 +156,9 @@ void app_main(void)
 	wifi.connectAP(WIFI_SSID, WIFI_PASS);	
 	//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
 
-	set_time();
+	unsigned wifi_time = xTaskGetTickCount()*portTICK_RATE_MS/1000 - time1;
+	printf("WiFi TIME: %u s\n", wifi_time);
+	set_time(wifi_time);
 
 	Server server;
 	while(1){
