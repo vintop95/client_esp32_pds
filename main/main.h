@@ -62,5 +62,6 @@ extern "C" {
 //const int CONNECTED_BIT = BIT0;
 
 extern WiFi* pWifi;
+extern time_t boot_time;
 
 #endif

@@ -15,16 +15,26 @@
 
 //
 
+
 #include "main.h"
 
 #include "Sniffer.h"
 #include "Server.h"
 #include "Sender.h"
 
+#include "lwip/apps/sntp.h"
+
 //Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
 
+/* Variable holding number of times ESP32 restarted since first boot.
+ * It is placed into RTC memory using RTC_DATA_ATTR and
+ * maintains its value when ESP32 wakes from deep sleep.
+ */
+RTC_DATA_ATTR static int boot_count = 0;
+
 WiFi* pWifi;
+time_t boot_time;
 
 //Class used to define callback to call along with specific WiFi events
 class MyEventHandler: public WiFiEventHandler {
@@ -63,12 +73,76 @@ class MyEventHandler: public WiFiEventHandler {
 	}
 };
 
+
+///////////////////////BLOCCO SNTP
 /**
- * @todo: aggiungere sincronizzazione tempo con server
+ * @TODO: spostare in classe apposita
+ * 
+ */
+static void initialize_sntp(void)
+{
+    ESP_LOGI(LOG_TAG, "Initializing SNTP");
+    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_setservername(0, "pool.ntp.org");
+    sntp_init();
+}
+
+/**
+ * @TODO: spostare in classe apposita
+ * 
+ */
+static void obtain_time(void)
+{
+    initialize_sntp();
+
+    // wait for time to be set
+    time_t now = 0;
+    struct tm timeinfo = { 0 };
+    int retry = 0;
+    const int retry_count = 10;
+    while(timeinfo.tm_year < (2016 - 1900) && ++retry < retry_count) {
+        ESP_LOGI(LOG_TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+        time(&now);
+        localtime_r(&now, &timeinfo);
+    }
+}
+
+void set_time(){
+	time_t now;
+    struct tm timeinfo;
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
+    // Is time set? If not, tm_year will be (1970 - 1900).
+    if (timeinfo.tm_year < (2016 - 1900)) {
+        ESP_LOGI(LOG_TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
+        obtain_time();
+        // update 'now' variable with current time
+        time(&now);
+    }
+	
+	char timeString[100];
+	struct tm *ptm = gmtime(&now);
+	strftime(timeString, sizeof(timeString), "%FT%TZ", ptm);
+	printf("time set to: %s", timeString);
+
+	struct timeval tv;
+    gettimeofday(&tv, NULL);
+
+	// TODO: modo grezzo di ottenere il boot time, usare API
+	boot_time = now;
+}
+
+/**
+ * @TODO: aggiungere sincronizzazione tempo con server
  * 
  */
 void app_main(void)
 {
+	++boot_count;
+	ESP_LOGI(LOG_TAG, "Boot count: %d", boot_count);
+
 	//PRINT DEBUG LOG
 	esp_log_level_set("*", ESP_LOG_DEBUG);
 
@@ -80,6 +154,8 @@ void app_main(void)
 	//connect to WIFI_SSID network
 	wifi.connectAP(WIFI_SSID, WIFI_PASS);	
 	//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
+
+	set_time();
 
 	Server server;
 	while(1){

@@ -147,6 +147,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 	const wifi_ieee80211_packet_t *ipkt = (wifi_ieee80211_packet_t *)ppkt->payload;
     // Define pointers to the 802.11 packet header and payload
 	const wifi_ieee80211_mac_hdr_t *hdr = &ipkt->hdr;
+    const unsigned char* ieee80211_pkt_binary = (unsigned char*)hdr;
     //const uint8_t *data = ipkt->payload;
     // Pointer to the frame control section within the packet header
     const wifi_header_frame_control_t *frame_ctrl = (wifi_header_frame_control_t *)&hdr->frame_ctrl;
@@ -179,49 +180,60 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     // printBits(ppkt->rx_ctrl.sig_len);
     // printf("\n");
 
-    unsigned short pkt_size_short = (ppkt->rx_ctrl.sig_len << 4) | (ppkt->rx_ctrl.sig_len >> 8);
-    int pkt_size = (int)pkt_size_short;
-    printf("PACKET SIZE: %hu B \n", pkt_size);
+    //// e se non ci fosse bisogno di cio?
+    // unsigned short pkt_size_short = (ppkt->rx_ctrl.sig_len << 4) | (ppkt->rx_ctrl.sig_len >> 8);
+    // int pkt_size = (int)pkt_size_short;
+    ////
     
-    pkt_size -= sizeof(wifi_ieee80211_mac_hdr_t) - 4;
-    printf("PAYLOAD SIZE WITHOUT CRC32: %hu B \n", pkt_size);
+    unsigned int pkt_size = ppkt->rx_ctrl.sig_len;
+    printf("PACKET SIZE: %u B \n", ppkt->rx_ctrl.sig_len);
+    
+    unsigned int payload_size = pkt_size - (sizeof(wifi_ieee80211_mac_hdr_t) + 4);
+    printf("PAYLOAD SIZE WITHOUT CRC32: %u B \n", payload_size);
 
     //json structure to send
     Record r;
     r.sender_mac = addr2;
-    r.timestamp = ppkt->rx_ctrl.timestamp;
+
+    unsigned time_elapsed = ppkt->rx_ctrl.timestamp/1000000;
+    // TODO:attenzione, dovrei usare 64bit per il time ma 32bit vanno bene fino al 2030
+    // su time.h ci dovrebbe essere la funzione get_boot_time()
+    r.timestamp = (unsigned)boot_time + (unsigned)time_elapsed;
     r.rssi = ppkt->rx_ctrl.rssi;
     r.ssid = "";
 
-    printf("payload:\n");
-    for(int i=0; i<pkt_size; ++i){
-        printf("%02x ", (unsigned char)ipkt->payload[i]);
-    }
+     printf("payload:\n");
+     for(int i=0; i<pkt_size; ++i){
+        //printf("%02x ", (unsigned char)ipkt->payload[i]);
+        printf("%02x ", ieee80211_pkt_binary[i]);
+     }
 
     // USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
+    // TODO: sto facendo l'hash dell'intero header, non del contenuto del payload
+    // perché non mi convince il contenuto, proviamo innanzitutto a vedere se 
+    // due board riescono a sniffare lo stesso pacchetto (con stesso hash), se sì
+    // vediamo di estendere l'hash all'intero pacchetto.
     uint8_t shaData[20];
-    esp_sha(SHA1, (const unsigned char*)ipkt->payload, pkt_size, shaData);
+    esp_sha(SHA1, (const unsigned char*)ieee80211_pkt_binary, 24, shaData); //"ipkt->payload, pkt_size" al posto di "hdrChar, 24"
+    unsigned char shaBase64[100];
+    size_t outputLen;
+    mbedtls_base64_encode(shaBase64, 100, (size_t*)&outputLen, (const unsigned char*)shaData, (size_t)20 );
+    std::string str((const char *)shaBase64);
+    r.hashed_pkt = str;
 
-    for(int i=0; i<20; ++i){
-        printf("%02x ", shaData[i]);
-    }
-    printf("\n");
-
-    // TODO: not working
-    // r.hashed_pkt = (const char) shaData[0];
-
-	printf("%d %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
+    printf("\nTIME ELAPSED: %u SEC\n", ppkt->rx_ctrl.timestamp/1000000);  
+	printf("%u %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
         /**< timestamp. The local time when this packet is received. 
         * It is precise only if modem sleep or light sleep is not enabled.
         unit: microsecond */
-        ppkt->rx_ctrl.timestamp,
+        r.timestamp,
 		wifi_pkt_type2str((wifi_promiscuous_pkt_type_t)frame_ctrl->type, (wifi_mgmt_subtypes_t)frame_ctrl->subtype),
         ppkt->rx_ctrl.channel,
         hdr->sequence_ctrl,
 		ppkt->rx_ctrl.rssi,
         addr2
 	);
-
+    
     if (frame_ctrl->type == WIFI_PKT_MGMT && frame_ctrl->subtype == PROBE_REQ)
     {
         const wifi_mgmt_probe_req_t *probe_req_frame = (wifi_mgmt_probe_req_t*) ipkt->payload;
@@ -231,8 +243,9 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
         r.ssid = ssid;
 
-        printf(", SSID=%s", ssid);
+        printf(", SSID=%s\n", ssid);
     }
+    printf("SHA_BASE64: %s\n", shaBase64);
     printf("\n");
 
     //aggiungi il record alla lista di record da inviare

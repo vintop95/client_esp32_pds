@@ -57,24 +57,27 @@ int Sender::sendRecordsToServer(){
     json j;
     int res = 0;
     
-    ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
+    if(records.size() != 0){
+        ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
 
-    //esp_wifi_set_promiscuous(false);
-    res = server->connect();
+        //esp_wifi_set_promiscuous(false);
+        res = server->connect();
 
-    if (res != 0){
-        return -1;
+        if (res != 0){
+            return -1;
+        }
+
+        j = records;
+        records.clear();
+
+        server->sendData(j);
+        res = server->waitAck();
+
+        server->sendEnd();
+        server->close();
+        //esp_wifi_set_promiscuous(true);
     }
 
-    j = records;
-    records.clear();
-
-    server->sendData(j);
-    res = server->waitAck();
-
-    server->sendEnd();
-    server->close();
-    //esp_wifi_set_promiscuous(true);
     return res;
 }
 
