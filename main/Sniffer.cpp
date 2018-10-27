@@ -235,7 +235,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     struct timeval tv;
     gettimeofday(&tv, NULL); 
-    unsigned delta_time = tv.tv_sec - r.timestamp;
+    unsigned delta_time = tv.tv_sec; //tv.tv_sec - r.timestamp;
     printf("DELTA TIME: %u s\n", delta_time);
 
     r.rssi = ppkt->rx_ctrl.rssi;
