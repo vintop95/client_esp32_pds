@@ -179,6 +179,11 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     mac2str(hdr->addr2, addr2);//SENDER
     mac2str(hdr->addr3, addr3);//FILTERING
 
+    ///// DEBUG: FILTER MAC ADDRESS SENDER
+    if(strcmp(addr2, "c0:ee:fb:02:b8:fa") != 0 ){
+        return;
+    }
+
     // Size of the packet
     /**< length of packet including Frame Check Sequence(FCS) - 12 bit field*/
         
