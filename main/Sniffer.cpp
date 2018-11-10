@@ -312,7 +312,7 @@ void Sniffer::init(){
  */
 void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = 1;
-
+    esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
     pSender->start_timer();
     
     while (true) {
@@ -322,7 +322,7 @@ void Sniffer::wifi_sniffer_loop_channels(){
         // IT CHANGES CHANNEL, DISABLED BECAUSE OF CONFLICTS WITH SENDING TO THE SERVER
         // esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
 
-        channel = (channel % WIFI_CHANNEL_MAX) + 1;
+        // channel = (channel % WIFI_CHANNEL_MAX) + 1;
     }
 
 }
