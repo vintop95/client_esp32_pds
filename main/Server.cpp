@@ -151,7 +151,7 @@ int Server::sendEnd(){
  * 
  * @return 0 if all went well, a number != 0 otherwise
  */
-int Server::waitAck(){
+int Server::waitAck(time_t* time_ptr){
 	//receive buffer
     char recv_buf[20];
 
@@ -166,6 +166,17 @@ int Server::waitAck(){
 		}
 		if(eqStr(recv_buf,"OK")){
 			ESP_LOGI(LOG_TAG, "SERVER ACK IS OK");
+
+			//ho ricevuto il timestamp?
+			//se si, uso settimeofday
+			if(time_ptr != nullptr){
+				//reading timestamp from buffer
+				char timestr[sizeof(time_t)];
+				strncpy(timestr,recv_buf + strlen("OK "), sizeof(time_t));
+				time_t timestamp = ntohl(atol(timestr));
+				*time_ptr = timestamp;
+			}
+
 			return 0;
 		}else{
 			ESP_LOGE(LOG_TAG, "THERE WAS A PROBLEM IN THE SENDING");
@@ -173,6 +184,7 @@ int Server::waitAck(){
 		}
 	} while(r > 0);	
 	printf("\n");
+
 }
 
 /**

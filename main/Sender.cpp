@@ -73,7 +73,15 @@ int Sender::sendRecordsToServer(){
         server->sendData(j);
         res = server->waitAck();
 
+        time_t timestamp= 0;
         server->sendEnd();
+        res = server->waitAck(&timestamp);
+    
+        if(timestamp != 0){
+            //set current time
+
+        }
+
         server->close();
         //esp_wifi_set_promiscuous(true);
     }

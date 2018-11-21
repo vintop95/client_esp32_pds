@@ -33,22 +33,18 @@
 #include "WiFi.h"
 #include "FreeRTOSTimer.h"
 #include "json.hpp"
+
+#include "params.h"
 using json = nlohmann::json;
 using namespace std;
-
-
-
-// #define WIFI_SSID "CUTRE-TPS" //CONFIG_ESP_WIFI_SSID
-// #define WIFI_PASS "Einaudi1935!" //CONFIG_ESP_WIFI_PASSWORD
-// #define SERVER_IP "172.16.139.251" //"192.168.43.5"
 
 // VT: needed to connect in a wifi network
 // modify Kconfig.projbuild to add config parameters like this
 // to set them use make menuconfig or modify sdkconfig
-#define DEVICE_NAME CONFIG_DEVICE_NAME //"ESP0"
+/* #define DEVICE_NAME CONFIG_DEVICE_NAME //"ESP0"
 #define WIFI_SSID CONFIG_ESP_WIFI_SSID
 #define WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
-#define SERVER_IP CONFIG_SERVER_IP //"192.168.43.5"
+#define SERVER_IP CONFIG_SERVER_IP //"192.168.43.5" */
 
 #define SERVER_PORT 7856
 

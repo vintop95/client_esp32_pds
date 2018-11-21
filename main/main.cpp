@@ -130,6 +130,21 @@ void set_time(unsigned time_elapsed){
 
 	// TODO: modo grezzo di ottenere il boot time, usare API
 	boot_time = now - time_elapsed;
+
+
+
+/* 	struct tm tm;
+    tm.tm_year = 2018 - 1900;
+    tm.tm_mon = 10;
+    tm.tm_mday = 15;
+    tm.tm_hour = 14;
+    tm.tm_min = 10;
+    tm.tm_sec = 10; 
+	time_t t = mktime(&tm);
+    printf("Setting time: %s", asctime(&tm));
+    struct timeval now = { .tv_sec = t };
+    settimeofday(&now, NULL);
+	*/
 }
 
 /**
