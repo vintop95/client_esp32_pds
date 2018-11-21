@@ -179,6 +179,7 @@ void app_main(void)
 	while(1){
 		server.setIpPort(SERVER_IP, SERVER_PORT);
 		Sender sender(&server, 10000);
+		sender.initTimestamp();
 		Sniffer sniffer(&sender);
 		sniffer.init();
 	}

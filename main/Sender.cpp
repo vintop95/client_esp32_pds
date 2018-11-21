@@ -6,6 +6,8 @@
  * Vincenzo Topazio
  */
 #include "Sender.h"
+#include <time.h>
+#include <sys/time.h>
 
 static const char* LOG_TAG = "Sender";
 
@@ -45,6 +47,42 @@ void to_json(json& j, const Record& r) {
                  {"hashed_pkt", r.hashed_pkt}, 
                  {"ssid", r.ssid}};
 }
+/**
+ * @brief Initialize timestamp during the boot phase
+ * 
+ * @return 0 if all went well, otherwise a number != 0
+ */
+int Sender::initTimestamp(){
+    int res = 0;
+    uint32_t timestamp= 0;
+    ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
+
+        //esp_wifi_set_promiscuous(false);
+    res = server->connect();
+    if (res != 0){
+        return -1;
+    }
+    //send an 'END' to Server just to obtain the timestamp 
+    server->sendEnd();
+    res = server->waitAck(&timestamp);
+    
+    if(res == 0){
+        //set received time as current time
+        struct timeval now;
+        now.tv_sec = timestamp;
+        int r = settimeofday(&now, NULL);
+        if(r != 0){
+            ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
+            res = -1;
+        }
+
+    }
+
+        server->close();
+        //esp_wifi_set_promiscuous(true);
+
+    return res;
+}
 
 /**
  * @brief It sends the records to the server
@@ -73,12 +111,19 @@ int Sender::sendRecordsToServer(){
         server->sendData(j);
         res = server->waitAck();
 
-        time_t timestamp= 0;
+        uint32_t timestamp;
         server->sendEnd();
         res = server->waitAck(&timestamp);
     
-        if(timestamp != 0){
-            //set current time
+        if(res == 0){
+            //set received time as current time
+            struct timeval now;
+            now.tv_sec = timestamp;
+            int r = settimeofday(&now, NULL);
+            if(r != 0){
+                ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
+                res = -1;
+            }
 
         }
 

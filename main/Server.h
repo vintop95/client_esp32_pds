@@ -47,7 +47,7 @@ public:
     int sendInit(json j);
     int sendData(json j);
     int sendEnd();
-    int waitAck(time_t* time_ptr = nullptr);
+    int waitAck(uint32_t* time_ptr = nullptr);
     void close();
 };
 

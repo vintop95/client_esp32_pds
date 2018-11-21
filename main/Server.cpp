@@ -7,6 +7,7 @@
  */
 #include "Server.h"
 
+
 static const char* LOG_TAG = "Server";
 
 /**
@@ -151,7 +152,7 @@ int Server::sendEnd(){
  * 
  * @return 0 if all went well, a number != 0 otherwise
  */
-int Server::waitAck(time_t* time_ptr){
+int Server::waitAck(uint32_t* time_ptr){
 	//receive buffer
     char recv_buf[20];
 
@@ -167,13 +168,13 @@ int Server::waitAck(time_t* time_ptr){
 		if(eqStr(recv_buf,"OK")){
 			ESP_LOGI(LOG_TAG, "SERVER ACK IS OK");
 
-			//ho ricevuto il timestamp?
-			//se si, uso settimeofday
+			//e' richiesto il timestamp? se si lo posiziono nel puntatore
 			if(time_ptr != nullptr){
 				//reading timestamp from buffer
-				char timestr[sizeof(time_t)];
-				strncpy(timestr,recv_buf + strlen("OK "), sizeof(time_t));
-				time_t timestamp = ntohl(atol(timestr));
+				uint32_t timestamp;
+				memcpy(&timestamp,recv_buf + strlen("OK ") +1, sizeof(uint32_t));//WARNING
+				timestamp = ntohl(timestamp);
+				printf("TIMESTAMP: %u\n", timestamp);
 				*time_ptr = timestamp;
 			}
 
