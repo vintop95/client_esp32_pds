@@ -59,6 +59,9 @@ client:
 Problemi con l'installazione di python:  
 https://stackoverflow.com/questions/52077195/msys2-installing-a-python-package-fails
 
+***ERROR*** A stack overflow in task Tmr Svc has been detected.  
+https://www.esp32.com/viewtopic.php?t=1459
+
 ## Errori di incompatibilità da C a C++
 Inizializzazione di strutture:
 ```wifi_config_t sta_config={.sta={.ssid="foo",.password="bar, (...) }};```
