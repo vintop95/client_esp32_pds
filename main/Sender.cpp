@@ -57,13 +57,17 @@ int Sender::initTimestamp(){
     uint32_t timestamp= 0;
     ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
 
-        //esp_wifi_set_promiscuous(false);
+    //esp_wifi_set_promiscuous(false);
     res = server->connect();
     if (res != 0){
         return -1;
     }
     //send an 'END' to Server just to obtain the timestamp 
     server->sendEnd();
+
+    res = server->waitAck();
+    
+    /*
     res = server->waitAck(&timestamp);
     
     if(res == 0){
@@ -77,9 +81,10 @@ int Sender::initTimestamp(){
         }
 
     }
+    */
 
-        server->close();
-        //esp_wifi_set_promiscuous(true);
+    server->close();
+    //esp_wifi_set_promiscuous(true);
 
     return res;
 }
@@ -113,8 +118,11 @@ int Sender::sendRecordsToServer(){
 
         uint32_t timestamp;
         server->sendEnd();
-        res = server->waitAck(&timestamp);
+        
+        res = server->waitAck();
     
+        /*
+        res = server->waitAck(&timestamp);
         if(res == 0){
             //set received time as current time
             struct timeval now;
@@ -124,8 +132,8 @@ int Sender::sendRecordsToServer(){
                 ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
                 res = -1;
             }
-
         }
+        */
 
         server->close();
         //esp_wifi_set_promiscuous(true);

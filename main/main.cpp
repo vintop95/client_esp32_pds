@@ -162,8 +162,6 @@ void app_main(void)
 	//SETUP WIFI
 	WiFi wifi = WiFi(); //calling WiFi::init inside the constructor (RAII)
 
-	unsigned time1 = xTaskGetTickCount()*portTICK_RATE_MS/1000;
-
 	pWifi = &wifi;
 	wifi.setWifiEventHandler(new MyEventHandler());
 
@@ -171,9 +169,6 @@ void app_main(void)
 	wifi.connectAP(WIFI_SSID, WIFI_PASS);	
 	//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
 
-	unsigned wifi_time = xTaskGetTickCount()*portTICK_RATE_MS/1000 - time1;
-	printf("WiFi TIME: %u s\n", wifi_time);
-	set_time(wifi_time);
 
 	Server server;
 	while(1){
