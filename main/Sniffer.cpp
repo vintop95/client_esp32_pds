@@ -122,8 +122,6 @@ void printBits(unsigned num)
    }
 }
 
-static unsigned last_time = 0;
-static int times_restart = 0;
 /**
  * @brief Callback that handles the sniffed packet
  * It must push back to the list of records the following fields:
@@ -206,42 +204,14 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     Record r;
     r.sender_mac = addr2;
 
-    
-    //TODO: dopo 71 minuti il timestamp dei pkt ricomincia da zero!!!
-    unsigned time_elapsed = ppkt->rx_ctrl.timestamp/1000000;
-
-    if(last_time > time_elapsed){
-        //timestamp ha ricominciato da zero
-        times_restart++;
-    }
-    last_time = time_elapsed;
-
-    //// CALCOLO TIMESTAMP CON xTaskGetTickCount
-    // unsigned from_boot_elapsed = xTaskGetTickCount()*portTICK_RATE_MS/1000;
-    // unsigned delta_time = from_boot_elapsed - (time_elapsed + times_restart*4295);
-    // printf("DELTA TIME: %u s\n", delta_time);
-    // struct timeval tv;
-    // gettimeofday(&tv, NULL); 
-    // unsigned timestamp_final = tv.tv_sec - delta_time;
-    // r.timestamp = timestamp_final;
-    //// 
-
-
-
-    // printf("NOW: %u SEC\n", (unsigned)tv.tv_sec); 
-    // printf("TIMESTAMP TO SEND: %u SEC\n", timestamp_final); 
-    
-    
-
-    // TODO:attenzione, dovrei usare 64bit per il time ma 32bit vanno bene fino al 2030
-    // - ho dichiarato boot_time come var globale che contiene i sec dall'inizio (più o meno)
-    // su time.h ci dovrebbe essere la funzione get_boot_time()
-    r.timestamp = (unsigned)boot_time + ((unsigned)time_elapsed + times_restart*4295);
-
+    //// CALCOLO TIMESTAMP CON GETTIME
     struct timeval tv;
     gettimeofday(&tv, NULL); 
-    unsigned delta_time = tv.tv_sec; //tv.tv_sec - r.timestamp;
-    printf("DELTA TIME: %u s\n", delta_time);
+    r.timestamp = tv.tv_sec;
+    //// 
+
+    printf("NOW: %u SEC\n", (unsigned)tv.tv_sec); 
+    printf("TIMESTAMP TO SEND: %u SEC\n", r.timestamp); 
 
     r.rssi = ppkt->rx_ctrl.rssi;
     r.ssid = "";

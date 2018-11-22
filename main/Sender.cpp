@@ -55,36 +55,38 @@ void to_json(json& j, const Record& r) {
 int Sender::initTimestamp(){
     int res = 0;
     uint32_t timestamp= 0;
-    ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
 
-    //esp_wifi_set_promiscuous(false);
-    res = server->connect();
-    if (res != 0){
-        return -1;
-    }
-    //send an 'END' to Server just to obtain the timestamp 
-    server->sendEnd();
+    do{
+        ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
 
-    res = server->waitAck();
-    
-    /*
-    res = server->waitAck(&timestamp);
-    
-    if(res == 0){
-        //set received time as current time
-        struct timeval now;
-        now.tv_sec = timestamp;
-        int r = settimeofday(&now, NULL);
-        if(r != 0){
-            ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
-            res = -1;
+        //esp_wifi_set_promiscuous(false);
+        res = server->connect();
+        if (res != 0){
+            ESP_LOGE(LOG_TAG, "CANNOT CONNECT TO SERVER. RETRYING...");
+            //return -1;
+            continue; //retry
+        }
+        //send an 'END' to Server just to obtain the timestamp 
+        server->sendEnd();
+
+        res = server->waitAck(&timestamp);
+
+        if(res == 0){
+            //set received time as current time
+            struct timeval now;
+            now.tv_sec = timestamp;
+            int r = settimeofday(&now, NULL);
+            if(r != 0){
+                ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY. RETRYING...");
+                res = -1;
+            }
+
         }
 
-    }
-    */
 
-    server->close();
-    //esp_wifi_set_promiscuous(true);
+        server->close();
+        //esp_wifi_set_promiscuous(true);
+    }while(res != 0);
 
     return res;
 }
@@ -118,10 +120,7 @@ int Sender::sendRecordsToServer(){
 
         uint32_t timestamp;
         server->sendEnd();
-        
-        res = server->waitAck();
     
-        /*
         res = server->waitAck(&timestamp);
         if(res == 0){
             //set received time as current time
@@ -133,7 +132,6 @@ int Sender::sendRecordsToServer(){
                 res = -1;
             }
         }
-        */
 
         server->close();
         //esp_wifi_set_promiscuous(true);

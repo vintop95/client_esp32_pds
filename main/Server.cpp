@@ -172,7 +172,7 @@ int Server::waitAck(uint32_t* time_ptr){
 			if(time_ptr != nullptr){
 				//reading timestamp from buffer
 				uint32_t timestamp;
-				memcpy(&timestamp,recv_buf + strlen("OK ") +1, sizeof(uint32_t));//WARNING
+				memcpy(&timestamp,recv_buf + strlen("OK ") , sizeof(uint32_t));//WARNING
 				timestamp = ntohl(timestamp);
 				printf("TIMESTAMP: %u\n", timestamp);
 				*time_ptr = timestamp;
