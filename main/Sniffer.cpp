@@ -293,7 +293,7 @@ void Sniffer::wifi_sniffer_loop_channels(){
     
     while (true) {
         // loop all channels
-        vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
+        vTaskDelay( pdMS_TO_TICKS(WIFI_CHANNEL_SWITCH_INTERVAL) );
         
         // IT CHANGES CHANNEL, DISABLED BECAUSE OF CONFLICTS WITH SENDING TO THE SERVER
         // esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);

@@ -42,6 +42,7 @@ using namespace std;
 
 #define LISTEN_PERIOD_MS 60000
 #define WIFI_LISTEN_CHANNEL 1
+#define RETRY_PERIOD_MS 3000
 
 //VT: necessary in order to use c++
 extern "C" {

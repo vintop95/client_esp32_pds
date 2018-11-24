@@ -64,6 +64,7 @@ int Sender::initTimestamp(){
         if (res != 0){
             ESP_LOGE(LOG_TAG, "CANNOT CONNECT TO SERVER. RETRYING...");
             //return -1;
+            vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS) ); // wait 
             continue; //retry
         }
 

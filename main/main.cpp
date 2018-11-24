@@ -5,16 +5,13 @@
  * Giorgio Pizzuto
  * Vincenzo Topazio
  */
-
 /**
  * LOG FUNCTIONS:
+ * ESP_LOGE() -> ERROR
+ * ESP_LOGW() -> WARNING
  * ESP_LOGI() -> INFO
  * ESP_LOGD() -> DEBUG (NORMALLY DOES NOT PRINT)
- * ESP_LOGE() -> ERROR
  */
-
-//
-
 
 #include "main.h"
 
@@ -22,23 +19,41 @@
 #include "Server.h"
 #include "Sender.h"
 
-#include "lwip/apps/sntp.h"
+#include "driver/gpio.h"
+#define BLINK_GPIO (gpio_num_t) 13
 
-//Tag used for ESP32 log functions 
+// Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
 
-/* Variable holding number of times ESP32 restarted since first boot.
+/** Variable holding number of times ESP32 restarted since first boot.
  * It is placed into RTC memory using RTC_DATA_ATTR and
  * maintains its value when ESP32 wakes from deep sleep.
  */
 RTC_DATA_ATTR static int boot_count = 0;
 
-WiFi* pWifi;
-time_t boot_time;
+void retry_reconnect(WiFi* pWifi){
+	int attempts = 1;
+	while(!pWifi->isConnectedToAP()){
+		ESP_LOGI(LOG_TAG, "CONNECT TO WIFI: ATTEMPT #%d", attempts);
+		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
+		gpio_set_level(BLINK_GPIO, 0);
+		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS) );
+		gpio_set_level(BLINK_GPIO, 1);
+	}
+}
 
-//Class used to define callback to call along with specific WiFi events
-class MyEventHandler: public WiFiEventHandler {
-	/* The event handler provides over-rides for:
+/**
+ * Class used to define callback to call along with specific WiFi events
+ */
+class MyEventHandler: public WiFiEventHandler {	
+public:
+	MyEventHandler(WiFi* p){
+		pWifi = p;
+	}
+private:
+	WiFi* pWifi;
+
+	/* // The event handler provides over-rides for:
 	virtual esp_err_t apStaConnected(system_event_ap_staconnected_t info);
 	virtual esp_err_t apStaDisconnected(system_event_ap_stadisconnected_t info);
 	virtual esp_err_t apStart();
@@ -63,113 +78,51 @@ class MyEventHandler: public WiFiEventHandler {
 	// TODO: LIMITARE IL NUMERO DI TENTATIVI DI RICONNESSIONE
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGD(LOG_TAG, "disconnected! Retrying to reconnect...");
-		while(!pWifi->isConnectedToAP()){
-			pWifi->connectAP(WIFI_SSID, WIFI_PASS);
-			vTaskDelay(5000 / portTICK_RATE_MS);
-		}
-		
+		ESP_LOGE(LOG_TAG, "disconnected! Retrying to reconnect...");
+		retry_reconnect(pWifi);		
     	return ESP_OK;
 	}
 };
 
+void setup_client(void *pvParameter){
 
-///////////////////////BLOCCO SNTP
-/**
- * @TODO: spostare in classe apposita
- * 
- */
-static void initialize_sntp(void)
-{
-    ESP_LOGI(LOG_TAG, "Initializing SNTP");
-    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    sntp_setservername(0, "pool.ntp.org");
-    sntp_init();
-}
-
-/**
- * @TODO: spostare in classe apposita
- * 
- */
-static void obtain_time(void)
-{
-    initialize_sntp();
-
-    // wait for time to be set
-    time_t now = 0;
-    struct tm timeinfo = { 0 };
-    int retry = 0;
-    const int retry_count = 10;
-    while(timeinfo.tm_year < (2016 - 1900) && ++retry < retry_count) {
-        ESP_LOGI(LOG_TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-        time(&now);
-        localtime_r(&now, &timeinfo);
-    }
-}
-
-void set_time(){
-	time_t now;
-    struct tm timeinfo;
-    time(&now);
-    localtime_r(&now, &timeinfo);
-
-    // Is time set? If not, tm_year will be (1970 - 1900).
-    if (timeinfo.tm_year < (2016 - 1900)) {
-        ESP_LOGI(LOG_TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
-        obtain_time();
-        // update 'now' variable with current time
-        time(&now);
-    }
-	
-	char timeString[100];
-	struct tm *ptm = gmtime(&now);
-	strftime(timeString, sizeof(timeString), "%FT%TZ", ptm);
-	printf("time set to: %s", timeString);
-
-
-/* 	struct tm tm;
-    tm.tm_year = 2018 - 1900;
-    tm.tm_mon = 10;
-    tm.tm_mday = 15;
-    tm.tm_hour = 14;
-    tm.tm_min = 10;
-    tm.tm_sec = 10; 
-	time_t t = mktime(&tm);
-    printf("Setting time: %s", asctime(&tm));
-    struct timeval now = { .tv_sec = t };
-    settimeofday(&now, NULL);
-	*/
-}
-
-/**
- * @TODO: aggiungere sincronizzazione tempo con server
- * 
- */
-void app_main(void)
-{
-	++boot_count;
-	ESP_LOGI(LOG_TAG, "Boot count: %d", boot_count);
-
-	//PRINT DEBUG LOG
+	// SET THE LEVEL OF THE LOGGER
+	// If you don't set the level to DEBUG LEVEL, it does not print
+	// the debug log but just the ERROR and INFO log messages
+	// TODO: NOT WORKING 
 	esp_log_level_set("*", ESP_LOG_DEBUG);
 
-	//SETUP WIFI
-	WiFi wifi = WiFi(); //calling WiFi::init inside the constructor (RAII)
+	ESP_LOGW(LOG_TAG, "+++++ WELCOME TO THE ESP32 SNIFFER 4 INDOOR LOCALIZATION +++++");
+	ESP_LOGD(LOG_TAG, "LEVEL OF LOG SET TO DEBUG");
 
-	pWifi = &wifi;
-	wifi.setWifiEventHandler(new MyEventHandler());
+	++boot_count;
+	ESP_LOGI(LOG_TAG, ">>> BOOT COUNT: %d <<<", boot_count);
 
-	//connect to WIFI_SSID network
-	wifi.connectAP(WIFI_SSID, WIFI_PASS);	
-	//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
-
+	// SETUP WIFI STRUCTURE
+	WiFi wifi = WiFi();
+	wifi.setWifiEventHandler(new MyEventHandler(&wifi));
+		
 	Server server;
+	server.setIpPort(SERVER_IP, SERVER_PORT);
 	while(1){
-		server.setIpPort(SERVER_IP, SERVER_PORT);
+		wifi.connectAP(WIFI_SSID, WIFI_PASS);
+		retry_reconnect(&wifi);
 		Sender sender(&server, LISTEN_PERIOD_MS);
 		sender.initTimestamp();
 		Sniffer sniffer(&sender);
 		sniffer.init();
 	}
+}
+
+/**
+ * Incredibly this is the start point of the program
+ */
+void app_main(void)
+{
+	gpio_pad_select_gpio(BLINK_GPIO);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+
+	// TODO: check if the stack (4096) is enough
+	xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, NULL );
 }

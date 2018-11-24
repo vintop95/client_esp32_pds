@@ -55,7 +55,7 @@ WiFi::WiFi()
 	m_eventLoopStarted  = false;
 	m_initCalled        = false;
 	//m_pWifiEventHandler = new WiFiEventHandler();
-	m_apConnectionStatus       = UINT8_MAX;    // Are we connected to an access point?
+	m_apConnectionStatus = UINT8_MAX;// Are we connected to an access point?
 	init();
 } // WiFi
 
@@ -230,7 +230,8 @@ void WiFi::dump() {
  * @brief Returns whether wifi is connected to an access point
  */
 bool WiFi::isConnectedToAP() {
-	return m_apConnectionStatus;
+	// MODIFIED BY VINCENZO TOPAZIO
+	return ( m_apConnectionStatus==0 ? true : false);
 } // isConnected
 
 
