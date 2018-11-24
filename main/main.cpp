@@ -20,7 +20,9 @@
 #include "Sender.h"
 
 #include "driver/gpio.h"
-#define BLINK_GPIO (gpio_num_t) 13
+#define BLINK_GPIO (gpio_num_t) 2
+
+static int BOOT_OK = 0;
 
 // Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
@@ -32,12 +34,18 @@ static const char *LOG_TAG = "main";
 RTC_DATA_ATTR static int boot_count = 0;
 
 void retry_reconnect(WiFi* pWifi){
-	int attempts = 1;
+	int attempts = 0;
+	gpio_pad_select_gpio(BLINK_GPIO);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 	while(!pWifi->isConnectedToAP()){
+		++attempts;
 		ESP_LOGI(LOG_TAG, "CONNECT TO WIFI: ATTEMPT #%d", attempts);
 		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
+
+		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
 		gpio_set_level(BLINK_GPIO, 0);
-		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS) );
+		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
 		gpio_set_level(BLINK_GPIO, 1);
 	}
 }
@@ -78,8 +86,10 @@ private:
 	// TODO: LIMITARE IL NUMERO DI TENTATIVI DI RICONNESSIONE
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGE(LOG_TAG, "disconnected! Retrying to reconnect...");
-		retry_reconnect(pWifi);		
+		if(BOOT_OK){
+			ESP_LOGE(LOG_TAG, "disconnected! Retrying to reconnect...");
+			retry_reconnect(pWifi);	
+		}	
     	return ESP_OK;
 	}
 };
@@ -105,8 +115,8 @@ void setup_client(void *pvParameter){
 	Server server;
 	server.setIpPort(SERVER_IP, SERVER_PORT);
 	while(1){
-		wifi.connectAP(WIFI_SSID, WIFI_PASS);
 		retry_reconnect(&wifi);
+		BOOT_OK = 1;
 		Sender sender(&server, LISTEN_PERIOD_MS);
 		sender.initTimestamp();
 		Sniffer sniffer(&sender);
@@ -119,10 +129,6 @@ void setup_client(void *pvParameter){
  */
 void app_main(void)
 {
-	gpio_pad_select_gpio(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-
 	// TODO: check if the stack (4096) is enough
 	xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, NULL );
 }
