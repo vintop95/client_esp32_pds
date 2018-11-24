@@ -195,7 +195,8 @@ uint8_t WiFi::connectAP(const std::string& ssid, const std::string& password, bo
 		abort();
 	}
 
-	m_connectFinished.take("connectAP");   // Take the semaphore to wait for a connection.
+	// MODIFIED BY VINCENZO TOPAZIO
+	// m_connectFinished.take("connectAP");   // Take the semaphore to wait for a connection.
     do {
         ESP_LOGD(LOG_TAG, "esp_wifi_connect");
         errRc = ::esp_wifi_connect();
