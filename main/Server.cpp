@@ -176,6 +176,22 @@ int Server::waitAck(uint32_t* time_ptr){
 				timestamp = ntohl(timestamp);
 				printf("TIMESTAMP: %u\n", timestamp);
 				*time_ptr = timestamp;
+
+				//set received time as current time
+				struct timeval now;
+				now.tv_sec = timestamp;
+				int r = settimeofday(&now, NULL);
+				if(r != 0){
+					ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
+					return -1;
+				}else{
+					time_t tv;
+					time(&tv);
+					std::string text = "TIME OF DAY SET TO ";
+					text += std::to_string(tv);
+					text += " (" + std::to_string(now.tv_sec) + ")\n";
+					esp_log_write(ESP_LOG_INFO, LOG_TAG, text.c_str() );
+				}
 			}
 
 			return 0;

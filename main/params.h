@@ -9,7 +9,7 @@
     #define PARAMS_H_
 
     #define DEVICE_NAME "ESP0" 
-    #define CONF_CHOSEN 1
+    #define CONF_CHOSEN 0
 
     #if CONF_CHOSEN==0
         #define WIFI_SSID "xd"

@@ -38,15 +38,10 @@
 using json = nlohmann::json;
 using namespace std;
 
-// VT: needed to connect in a wifi network
-// modify Kconfig.projbuild to add config parameters like this
-// to set them use make menuconfig or modify sdkconfig
-/* #define DEVICE_NAME CONFIG_DEVICE_NAME //"ESP0"
-#define WIFI_SSID CONFIG_ESP_WIFI_SSID
-#define WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
-#define SERVER_IP CONFIG_SERVER_IP //"192.168.43.5" */
-
 #define SERVER_PORT 7856
+
+#define LISTEN_PERIOD_MS 60000
+#define WIFI_LISTEN_CHANNEL 1
 
 //VT: necessary in order to use c++
 extern "C" {
@@ -58,6 +53,5 @@ extern "C" {
 //const int CONNECTED_BIT = BIT0;
 
 extern WiFi* pWifi;
-extern time_t boot_time;
 
 #endif

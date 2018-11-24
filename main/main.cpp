@@ -108,7 +108,7 @@ static void obtain_time(void)
     }
 }
 
-void set_time(unsigned time_elapsed){
+void set_time(){
 	time_t now;
     struct tm timeinfo;
     time(&now);
@@ -126,11 +126,6 @@ void set_time(unsigned time_elapsed){
 	struct tm *ptm = gmtime(&now);
 	strftime(timeString, sizeof(timeString), "%FT%TZ", ptm);
 	printf("time set to: %s", timeString);
-
-
-	// TODO: modo grezzo di ottenere il boot time, usare API
-	boot_time = now - time_elapsed;
-
 
 
 /* 	struct tm tm;
@@ -169,11 +164,10 @@ void app_main(void)
 	wifi.connectAP(WIFI_SSID, WIFI_PASS);	
 	//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
 
-
 	Server server;
 	while(1){
 		server.setIpPort(SERVER_IP, SERVER_PORT);
-		Sender sender(&server, 10000);
+		Sender sender(&server, LISTEN_PERIOD_MS);
 		sender.initTimestamp();
 		Sniffer sniffer(&sender);
 		sniffer.init();

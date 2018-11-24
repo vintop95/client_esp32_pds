@@ -66,23 +66,10 @@ int Sender::initTimestamp(){
             //return -1;
             continue; //retry
         }
+
         //send an 'END' to Server just to obtain the timestamp 
         server->sendEnd();
-
         res = server->waitAck(&timestamp);
-
-        if(res == 0){
-            //set received time as current time
-            struct timeval now;
-            now.tv_sec = timestamp;
-            int r = settimeofday(&now, NULL);
-            if(r != 0){
-                ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY. RETRYING...");
-                res = -1;
-            }
-
-        }
-
 
         server->close();
         //esp_wifi_set_promiscuous(true);
@@ -105,7 +92,6 @@ int Sender::sendRecordsToServer(){
     if(records.size() != 0){
         ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
 
-        //esp_wifi_set_promiscuous(false);
         res = server->connect();
 
         if (res != 0){
@@ -120,21 +106,9 @@ int Sender::sendRecordsToServer(){
 
         uint32_t timestamp;
         server->sendEnd();
-    
         res = server->waitAck(&timestamp);
-        if(res == 0){
-            //set received time as current time
-            struct timeval now;
-            now.tv_sec = timestamp;
-            int r = settimeofday(&now, NULL);
-            if(r != 0){
-                ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
-                res = -1;
-            }
-        }
 
         server->close();
-        //esp_wifi_set_promiscuous(true);
     }
 
     return res;
@@ -169,12 +143,11 @@ void callback(FreeRTOSTimer *pTimer) {
     //TODO: Ho commentato le linee set_promiscous
     //perché causavano malfunzionamenti
 
-    Sender* pSender = (Sender *)pTimer->getData();
     //esp_wifi_set_promiscuous(false);
 
+    Sender* pSender = (Sender *)pTimer->getData();
     pSender->sendRecordsToServer();
 
-    //cout << "Timer scaduto";
     //esp_wifi_set_promiscuous(true);
 }
 
