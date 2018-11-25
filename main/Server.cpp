@@ -133,7 +133,7 @@ bool Server::send_records(json j){
 	}
 
 	gpio_set_level(BLINK_GPIO, 0);
-	
+
 	this->send_data(j);
 
 	bool ackOK = this->wait_ack();
@@ -276,10 +276,10 @@ bool Server::wait_ack(uint32_t* time_ptr){
 			// Is timestamp requested? If yes, i put it in the pointer
 			if(time_ptr != nullptr){
 				// Reading timestamp from buffer
-				uint32_t timestamp;
-				memcpy(&timestamp,recv_buf + strlen("OK ") , sizeof(uint32_t));
+				time_t timestamp;
+				memcpy(&timestamp,recv_buf + strlen("OK ") , sizeof(time_t));
 				timestamp = ntohl(timestamp);
-				printf("TIMESTAMP: %u\n", timestamp);
+				printf("TIMESTAMP: %lu\n", timestamp);
 
 				//set received time as current time
 				struct timeval now;
@@ -289,11 +289,10 @@ bool Server::wait_ack(uint32_t* time_ptr){
 					ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
 				}else{
 					*time_ptr = timestamp;
-					time_t tv;
-					time(&tv);
-					std::string text = "TIME OF DAY SET TO ";
+					time_t tv = time(NULL);
+					std::string text = "GET TIME OF DAY: ";
 					text += std::to_string(tv);
-					text += " (" + std::to_string(now.tv_sec) + ")\n";
+					text += " ( BUT I SET " + std::to_string(now.tv_sec) + "... )\n";
 					esp_log_write(ESP_LOG_INFO, LOG_TAG, text.c_str() );
 				}
 			}
