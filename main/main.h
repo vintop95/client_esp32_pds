@@ -24,6 +24,8 @@
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 
+#include "driver/gpio.h"
+
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -39,10 +41,13 @@ using json = nlohmann::json;
 using namespace std;
 
 #define SERVER_PORT 7856
+#define BLINK_GPIO (gpio_num_t) 2
 
 #define LISTEN_PERIOD_MS 60000
 #define WIFI_LISTEN_CHANNEL 1
 #define RETRY_PERIOD_MS 3000
+#define MAX_ATTEMPTS 10
+#define SLEEP_SECS 10
 
 //VT: necessary in order to use c++
 extern "C" {
@@ -54,6 +59,6 @@ extern "C" {
 //const int CONNECTED_BIT = BIT0;
 
 extern WiFi* pWifi;
-extern int BOOT_OK;
+extern int IS_WIFI_CONNECTED;
 
 #endif

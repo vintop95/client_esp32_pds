@@ -47,37 +47,6 @@ void to_json(json& j, const Record& r) {
                  {"hashed_pkt", r.hashed_pkt}, 
                  {"ssid", r.ssid}};
 }
-/**
- * @brief Initialize timestamp during the boot phase
- * 
- * @return 0 if all went well, otherwise a number != 0
- */
-int Sender::initTimestamp(){
-    int res = 0;
-    uint32_t timestamp= 0;
-
-    do{
-        ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
-
-        //esp_wifi_set_promiscuous(false);
-        res = server->connect();
-        if (res != 0){
-            ESP_LOGE(LOG_TAG, "CANNOT CONNECT TO SERVER. RETRYING...");
-            //return -1;
-            vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS) ); // wait 
-            continue; //retry
-        }
-
-        //send an 'END' to Server just to obtain the timestamp 
-        server->sendEnd();
-        res = server->waitAck(&timestamp);
-
-        server->close();
-        //esp_wifi_set_promiscuous(true);
-    }while(res != 0);
-
-    return res;
-}
 
 /**
  * @brief It sends the records to the server
@@ -146,8 +115,10 @@ void callback(FreeRTOSTimer *pTimer) {
 
     //esp_wifi_set_promiscuous(false);
 
-    Sender* pSender = (Sender *)pTimer->getData();
-    pSender->sendRecordsToServer();
+    if(IS_WIFI_CONNECTED){
+        Sender* pSender = (Sender *)pTimer->getData();
+        pSender->sendRecordsToServer();
+    }
 
     //esp_wifi_set_promiscuous(true);
 }

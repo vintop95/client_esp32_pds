@@ -33,16 +33,23 @@
  */
 class Server {
 private:
+    WiFi* pWifi;
     int s;//socket
     string ipStr;
     int port;
+    TaskHandle_t ledBlinkTask = NULL;
 
     int send(std::string str);
     int send(json); 
 public:
+    Server(WiFi* p):pWifi(p){}
     void setIpPort(std::string, int);
+
+    int wifi_connect();
     int connect();
 
+    int init_timestamp();
+    
     int sendInit(json j);
     int sendData(json j);
     int sendEnd();

@@ -19,10 +19,7 @@
 #include "Server.h"
 #include "Sender.h"
 
-#include "driver/gpio.h"
-#define BLINK_GPIO (gpio_num_t) 2
-
-int BOOT_OK = 0;
+int IS_WIFI_CONNECTED = 0;
 
 // Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
@@ -32,20 +29,6 @@ static const char *LOG_TAG = "main";
  * maintains its value when ESP32 wakes from deep sleep.
  */
 RTC_DATA_ATTR static int boot_count = 0;
-
-void retry_reconnect(WiFi* pWifi){
-	int attempts = 0;
-	while(!pWifi->isConnectedToAP()){
-		++attempts;
-		ESP_LOGI(LOG_TAG, "CONNECT TO WIFI: ATTEMPT #%d", attempts);
-		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
-
-		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
-		gpio_set_level(BLINK_GPIO, 0);
-		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
-		gpio_set_level(BLINK_GPIO, 1);
-	}
-}
 
 /**
  * Class used to define callback to call along with specific WiFi events
@@ -93,12 +76,11 @@ private:
     	return ESP_OK;
 	}
 
-	// TODO: LIMITARE IL NUMERO DI TENTATIVI DI RICONNESSIONE
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGE(LOG_TAG, "BOOT OK: %d", BOOT_OK);
-		if(BOOT_OK){
-			BOOT_OK = 0;
+		ESP_LOGE(LOG_TAG, "IS_WIFI_CONNECTED?: %d", IS_WIFI_CONNECTED);
+		if(IS_WIFI_CONNECTED){
+			IS_WIFI_CONNECTED = 0;
 		}	
     	return ESP_OK;
 	}
@@ -111,6 +93,10 @@ void setup_client(void *pvParameter){
     /* Set the GPIO as a push/pull output */
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 
+	// TODO: far funzionare il risveglio dal deep sleep premendo il
+	// pulsante accanto quello per il reboot
+	esp_sleep_enable_touchpad_wakeup();
+
 	// SET THE LEVEL OF THE LOGGER
 	// If you don't set the level to DEBUG LEVEL, it does not print
 	// the debug log but just the ERROR and INFO log messages
@@ -120,22 +106,34 @@ void setup_client(void *pvParameter){
 	ESP_LOGW(LOG_TAG, "+++++ WELCOME TO THE ESP32 SNIFFER 4 INDOOR LOCALIZATION +++++");
 	ESP_LOGD(LOG_TAG, "LEVEL OF LOG SET TO DEBUG");
 
-	++boot_count;
-	ESP_LOGI(LOG_TAG, ">>> BOOT COUNT: %d <<<", boot_count);
+	ESP_LOGI(LOG_TAG, ">>> BOOT COUNT: %d <<<", ++boot_count);
 
-	Server server;
-	server.setIpPort(SERVER_IP, SERVER_PORT);
 	// SETUP WIFI STRUCTURE
 	WiFi wifi = WiFi();
 	wifi.setWifiEventHandler(new MyEventHandler(&wifi));
 
+	Server server(&wifi);
+	server.setIpPort(SERVER_IP, SERVER_PORT);
+
+	Sender sender(&server, LISTEN_PERIOD_MS);
+	Sniffer sniffer(&sender);
+
 	while(1){
-		retry_reconnect(&wifi);
-		BOOT_OK = 1;
-		Sender sender(&server, LISTEN_PERIOD_MS);
-		sender.initTimestamp();
-		Sniffer sniffer(&sender);
-		sniffer.init();
+		int resConnection = server.wifi_connect();
+		if(resConnection != 0){
+			//esp_restart();
+			esp_sleep_enable_timer_wakeup(SLEEP_SECS*1000000);
+			esp_deep_sleep_start();
+		}
+
+		int got_timestamp = server.init_timestamp();
+		
+		// It is in an infinite loop that breaks only when the WiFi 
+		// connection is not available anymore
+		if(got_timestamp == 0){
+			sniffer.init();
+			sniffer.close();
+		}
 	}
 }
 
@@ -147,14 +145,11 @@ void app_main(void)
 	BaseType_t xReturned;
 	TaskHandle_t xHandle = NULL;
 
-
 	// TODO: check if the stack (4096) is enough
 	xReturned = xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, &xHandle );
-	//when the task is terminated, it must restart for resetting the sender and sniffer
 
-	/* The task was created.  Use the task's handle to delete the task. */
-	// if( xReturned == pdPASS )
-    // {
-    //     vTaskDelete( xHandle );
-    // }
+	if( xReturned != pdPASS )
+    {
+        ESP_LOGE(LOG_TAG, "Cannot create task");
+    }
 }

@@ -35,12 +35,49 @@ void Server::setIpPort(std::string _ip, int _port){
 	port = _port;
 }
 
+int Server::wifi_connect(){
+	int attempts = 0;
+	while(!pWifi->isConnectedToAP() && attempts < MAX_ATTEMPTS){
+		++attempts;
+		ESP_LOGI(LOG_TAG, "CONNECT TO WIFI: ATTEMPT #%d", attempts);
+		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
+
+		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
+		gpio_set_level(BLINK_GPIO, 0);
+		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
+		gpio_set_level(BLINK_GPIO, 1);
+	}
+
+	if(!pWifi->isConnectedToAP()){
+		IS_WIFI_CONNECTED = 0;
+		return -1;
+	}else{
+		IS_WIFI_CONNECTED = 1;
+		return 0;
+	}
+}
+
+void led_blink(void *pvParameter){
+	int ms_freq_standard = RETRY_PERIOD_MS/4;
+	int* ms_freq = &ms_freq_standard;
+	if(pvParameter != NULL){
+		ms_freq = (int*) (pvParameter);
+	}
+	while(1){
+		vTaskDelay( pdMS_TO_TICKS(*ms_freq) );
+		gpio_set_level(BLINK_GPIO, 0);
+		vTaskDelay( pdMS_TO_TICKS(*ms_freq) );
+		gpio_set_level(BLINK_GPIO, 1);
+	}
+}
+
 /**
  * @brief It connects to the server
  * 
  * @return 0 if all went well, a number != 0 otherwise
  */
 int Server::connect(){
+	
     const char* ip = ipStr.c_str();
 	
 	// create a new socket
@@ -62,11 +99,15 @@ int Server::connect(){
     }
 
 	// connect to the specified server
+	xTaskCreate(&led_blink, "led_blink", 512, NULL, 5, &ledBlinkTask );
 	int result = ::connect(s, (struct sockaddr*)&dest, sizeof(dest));
 	if(result != 0) {
 		ESP_LOGE(LOG_TAG, "Unable to connect to the target %s:%d", ip, port);
 		::close(s);
 		return result;
+	}else{
+		gpio_set_level(BLINK_GPIO, 1);
+		vTaskDelete(ledBlinkTask);
 	}
 	ESP_LOGI(LOG_TAG, "Connected to the target %s:%d", ip, port);
 
@@ -77,6 +118,43 @@ int Server::connect(){
 	this->sendInit(j);
 	this->waitAck();
     return 0;
+}
+
+/**
+ * @brief Initialize timestamp during the boot phase
+ * 
+ * @return 0 if all went well, otherwise a number != 0
+ */
+int Server::init_timestamp(){
+	int timeProtocolDidntWentWell;
+    uint32_t timestamp = 0;
+
+    do{
+        ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
+
+        timeProtocolDidntWentWell = connect();
+        if (timeProtocolDidntWentWell){
+            ESP_LOGE(LOG_TAG, "CANNOT CONNECT TO SERVER. RETRYING...");
+            vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS) ); // wait 
+            continue; //retry
+        }
+
+        //send an 'END' to Server just to obtain the timestamp 
+        sendEnd();
+        timeProtocolDidntWentWell = waitAck(&timestamp);
+
+        close();
+    }while(IS_WIFI_CONNECTED && timeProtocolDidntWentWell);
+
+	// TURN OFF THE FAST BLINKING OF SERVER CONNECTING
+	// IF WIFI DISCONNECTED BECAUSE NOW WE RETRY TO CONNECT TO WIFI
+	// AND WE MUST USE SLOW BLINKING
+	if( !IS_WIFI_CONNECTED && ledBlinkTask != NULL ){
+		vTaskDelete(ledBlinkTask);
+		ledBlinkTask = NULL;
+	}
+	
+    return timeProtocolDidntWentWell;
 }
 
 /**

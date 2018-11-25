@@ -31,9 +31,7 @@ Sniffer::Sniffer(Sender* sndr)
 
 Sniffer::~Sniffer()
 {
-    ESP_LOGE(LOG_TAG, "Destroying myself, time to die\n");
-    esp_wifi_set_promiscuous(false);
-    esp_wifi_set_promiscuous_rx_cb(NULL);
+    this->close();
 }
 
 /**
@@ -44,10 +42,16 @@ Sniffer::~Sniffer()
  */
 void Sniffer::init(){
     esp_wifi_set_promiscuous(true);
-    ESP_LOGI(LOG_TAG, "initialized: setting sniffed packet handler callback\n");
+    ESP_LOGI(LOG_TAG, "Start sniffing\n");
     esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
 
     wifi_sniffer_loop_channels();
+}
+
+void Sniffer::close(){
+    ESP_LOGE(LOG_TAG, "Stop sniffing...\n");
+    esp_wifi_set_promiscuous(false);
+    esp_wifi_set_promiscuous_rx_cb(NULL);
 }
 
 /**
@@ -182,6 +186,8 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
         return;
     }
     
+    gpio_set_level(BLINK_GPIO, 0);
+
     ////DEBUG: stampa contenuto della variabile ipkt
     //printf("SIZEOF wifi_header_frame_control_t: %d\n", sizeof(wifi_header_frame_control_t));
     // unsigned char *p = (unsigned char *)ipkt;
@@ -285,6 +291,8 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
+
+    gpio_set_level(BLINK_GPIO, 1);
 }
 
 /**
@@ -299,13 +307,12 @@ void Sniffer::wifi_sniffer_loop_channels(){
     esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
     pSender->start_timer();
     
-    while (BOOT_OK) {
+    while (IS_WIFI_CONNECTED) {
         // loop all channels
         vTaskDelay( pdMS_TO_TICKS(WIFI_CHANNEL_SWITCH_INTERVAL) );
         
         // IT CHANGES CHANNEL, DISABLED BECAUSE OF CONFLICTS WITH SENDING TO THE SERVER
         // esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-
         // channel = (channel % WIFI_CHANNEL_MAX) + 1;
     }
 

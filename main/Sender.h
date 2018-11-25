@@ -39,7 +39,6 @@ public:
     Server* server;
     Sender(Server* srv, int ms);
     int sendRecordsToServer();
-    int initTimestamp();
     int getListenPeriod(){
         return msListenPeriod;
     }
