@@ -59,7 +59,7 @@ extern "C" {
 //const int CONNECTED_BIT = BIT0;
 
 extern WiFi* pWifi;
-extern int IS_WIFI_CONNECTED;
+extern volatile int IS_WIFI_CONNECTED;
 
 void led_blink(void *pvParameter);
 

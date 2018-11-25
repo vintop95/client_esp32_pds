@@ -42,7 +42,9 @@ void Server::set_ip_port(std::string _ip, int _port){
  */
 bool Server::wifi_connect(){
 	int attempts = 0;
-	while(!pWifi->isConnectedToAP() && attempts < MAX_ATTEMPTS){
+	// Stranamente potrebe capitare che pWifi->isConnectedToAP() è vero ma IS_WIFI_CONNECTED
+	// è falso (perché la libreria WiFi.h non è così affidabile) quindi faccio doppio controllo
+	while( !IS_WIFI_CONNECTED && attempts < MAX_ATTEMPTS){
 		++attempts;
 		ESP_LOGI(LOG_TAG, "CONNECT TO WIFI: ATTEMPT #%d", attempts);
 		pWifi->connectAP(WIFI_SSID, WIFI_PASS);
@@ -51,15 +53,13 @@ bool Server::wifi_connect(){
 		gpio_set_level(BLINK_GPIO, 0);
 		vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS/2) );
 		gpio_set_level(BLINK_GPIO, 1);
+
+		if(pWifi->isConnectedToAP()){
+			IS_WIFI_CONNECTED = 1;
+		}
 	}
 
-	if(!pWifi->isConnectedToAP()){
-		IS_WIFI_CONNECTED = 0;
-		return false;
-	}else{
-		IS_WIFI_CONNECTED = 1;
-		return true;
-	}
+	return IS_WIFI_CONNECTED ? true : false;
 }
 
 
@@ -91,9 +91,11 @@ bool Server::connect(){
     }
 
 	// Start fast blinking
-	int freq = RETRY_PERIOD_MS/2;
-	xTaskCreate(&led_blink, "fast_blink", 512, &freq, 5, &ledBlinkTask );
-
+	if(ledBlinkTask == NULL){
+		int freq = RETRY_PERIOD_MS/2;
+		xTaskCreate(&led_blink, "fast_blink", 512, &freq, 5, &ledBlinkTask );
+	}
+	
 	// Connect to the specified server
 	int notConnected = ::connect(s, (struct sockaddr*)&dest, sizeof(dest));
 	if(notConnected) {
@@ -105,6 +107,7 @@ bool Server::connect(){
 		// and we must leave the led on
 		vTaskDelete(ledBlinkTask);
 		gpio_set_level(BLINK_GPIO, 1);
+		ledBlinkTask = NULL;
 	}
 	ESP_LOGI(LOG_TAG, "Connected to the target %s:%d", ip, port);
 
@@ -160,12 +163,14 @@ bool Server::send_records(json j){
 bool Server::init_timestamp(){
 	bool timeProtocolWentWell;
     uint32_t timestamp = 0;
+	int attempts = 0;
 
     do{
-        ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME");
+		++attempts;
+        ESP_LOGI(LOG_TAG, "CONNECTING TO SERVER TO OBTAIN CURRENT TIME. ATTEMPT #%d", attempts);
 
-        timeProtocolWentWell = this->connect();
-        if ( !timeProtocolWentWell ){
+        bool serverConnected = this->connect();
+        if ( !serverConnected ){
             ESP_LOGE(LOG_TAG, "CANNOT CONNECT TO SERVER. RETRYING...");
             vTaskDelay( pdMS_TO_TICKS(RETRY_PERIOD_MS) ); // wait 
             continue; //retry
@@ -175,12 +180,13 @@ bool Server::init_timestamp(){
         timeProtocolWentWell = wait_ack(&timestamp);
 
         this->close();
-    }while( IS_WIFI_CONNECTED && !timeProtocolWentWell );
+    }while( IS_WIFI_CONNECTED && !timeProtocolWentWell && attempts < MAX_ATTEMPTS );
 
 	// TURN OFF THE FAST BLINKING OF SERVER CONNECTING
 	// IF WIFI DISCONNECTED BECAUSE NOW WE RETRY TO CONNECT TO WIFI
 	// AND WE MUST USE SLOW BLINKING
-	if( !IS_WIFI_CONNECTED && ledBlinkTask != NULL ){
+	// OR WE JUST WANT TO KEEP IT STRAIGHT ON
+	if( ledBlinkTask != NULL ){
 		vTaskDelete(ledBlinkTask);
 		ledBlinkTask = NULL;
 	}
@@ -241,6 +247,16 @@ bool Server::send_end(){
 	return this->send(string("END"));
 }
 
+void print_date(time_t timestamp){
+	char buffer[26];
+    struct tm* tm_info;
+
+    tm_info = localtime(&timestamp);
+
+    strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+    ESP_LOGI(LOG_TAG, "%s", buffer);
+}
+
 /**
  * @brief It waits the ack from the server
  * - OK [timestamp]: all went well
@@ -279,21 +295,23 @@ bool Server::wait_ack(uint32_t* time_ptr){
 				time_t timestamp;
 				memcpy(&timestamp,recv_buf + strlen("OK ") , sizeof(time_t));
 				timestamp = ntohl(timestamp);
-				printf("TIMESTAMP: %lu\n", timestamp);
+				ESP_LOGI(LOG_TAG, "TIMESTAMP GOT: %lu\n", timestamp);
+				print_date(timestamp);
 
 				//set received time as current time
-				struct timeval now;
+				struct timeval now = {0,0};
 				now.tv_sec = timestamp;
+				now.tv_usec = 0;
 				int r = settimeofday(&now, NULL);
 				if(r != 0){
 					ESP_LOGE(LOG_TAG, "CANNOT SET TIME OF DAY");
 				}else{
 					*time_ptr = timestamp;
-					time_t tv = time(NULL);
-					std::string text = "GET TIME OF DAY: ";
-					text += std::to_string(tv);
-					text += " ( BUT I SET " + std::to_string(now.tv_sec) + "... )\n";
-					esp_log_write(ESP_LOG_INFO, LOG_TAG, text.c_str() );
+					// time_t tv = time(NULL);
+					// std::string text = "GET TIME OF DAY: ";
+					// text += std::to_string(tv);
+					// text += " ( BUT I SET " + std::to_string(now.tv_sec) + "... )\n";
+					// esp_log_write(ESP_LOG_INFO, LOG_TAG, text.c_str() );
 				}
 			}
 

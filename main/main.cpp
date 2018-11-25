@@ -19,7 +19,7 @@
 #include "Server.h"
 #include "Sender.h"
 
-int IS_WIFI_CONNECTED = 0;
+int volatile IS_WIFI_CONNECTED = 0;
 
 // Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
@@ -78,31 +78,10 @@ private:
 	virtual esp_err_t wifiReady();
 	*/
 
-	
-	virtual esp_err_t apStart() {
-	return ESP_OK;
-	}
-	virtual esp_err_t staConnected() {
-	return ESP_OK;
-	}
-	virtual esp_err_t staStart() {
-	return ESP_OK;
-	}
-	virtual esp_err_t wifiReady() {
-	return ESP_OK;
-	}
-
-	virtual esp_err_t staGotIp(system_event_sta_got_ip_t e){
-		//xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-    	return ESP_OK;
-	}
-
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGE(LOG_TAG, "IS_WIFI_CONNECTED?: %d", IS_WIFI_CONNECTED);
-		if(IS_WIFI_CONNECTED){
-			IS_WIFI_CONNECTED = 0;
-		}	
+		ESP_LOGE(LOG_TAG, "WAS_WIFI_CONNECTED?: %d -> NOW IS 0", IS_WIFI_CONNECTED);
+		IS_WIFI_CONNECTED = 0;
     	return ESP_OK;
 	}
 };
@@ -113,10 +92,6 @@ void setup_client(void *pvParameter){
 	gpio_pad_select_gpio(BLINK_GPIO);
     /* Set the GPIO as a push/pull output */
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-
-	// TODO: far funzionare il risveglio dal deep sleep premendo il
-	// pulsante accanto quello per il reboot
-	esp_sleep_enable_touchpad_wakeup();
 
 	// WHEN THE ESP32 SLEEPS, EVERY SLEEP_SECS the esp32 will be awaken
 	esp_sleep_enable_timer_wakeup(SLEEP_SECS*1000000);
@@ -151,7 +126,11 @@ void setup_client(void *pvParameter){
 
 		bool got_timestamp = server.init_timestamp();
 		if(!got_timestamp){
-			continue;
+			if(!IS_WIFI_CONNECTED){
+				continue;
+			}else{
+				esp_deep_sleep_start();
+			}
 		}
 
 		// It is in an infinite loop that breaks only when the WiFi 
@@ -169,7 +148,6 @@ void app_main(void)
 	BaseType_t xReturned;
 	TaskHandle_t xHandle = NULL;
 
-	// TODO: check if the stack (4096) is enough
 	xReturned = xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, &xHandle );
 
 	if( xReturned != pdPASS ){
