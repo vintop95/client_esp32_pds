@@ -19,8 +19,9 @@
  *   server per comunicare il nome del dispositivo esp32
  * - "DATA [jSON dei Record raccolti]": messaggio contenente i Record raccolti
  * Server:
- * - "OK": comunicazione ricevuta correttamente (per adesso solo dopo l'invio
- *   del messaggio INIT)
+ * - "END": messaggio per chiusura commessiome 
+ * - "OK [timestamp]": comunicazione ricevuta correttamente
+ *      con eventuale timestamp (uint32_t)
  * - "ERR": errore di ricezione
  * 
  * Ogni listenPeriod la sezione del sistema operativo FreeRTOS dedicata al 
@@ -29,26 +30,35 @@
  * Sembra più comodo avviare una nuova connessione TCP ogni listenPeriod 
  * anziché avviarla una volta sola e lasciarla attiva, ispirandosi al 
  * principio di protocollo stateless HTML
- * Il protocollo è da perfezionare, in particolare:
- * - Considerare l'introduzione di un messaggio END per 
- *   terminare la comunicazione
- * - Eventuali modifiche per il miglioramento delle prestazioni
  */
 class Server {
 private:
-    int s;//socket
-    string ipStr;
+    WiFi* pWifi;
+    int s; // socket
     int port;
-public:
-    void setIpPort(std::string, int);
-    int connect();
-    int send(std::string str);
-    int send(json); 
-    int sendInit(json j);
-    int sendData(json j);
-    int sendEnd();
-    int waitAck();
+    string ipStr;
+    TaskHandle_t ledBlinkTask = NULL;
+
+    bool connect();
+
+    bool send(std::string str);
+
+    bool send_init(json j);
+    bool send_data(json j);
+    bool send_end();
+
+    bool wait_ack(uint32_t* time_ptr = nullptr);
+
     void close();
+
+public:
+    Server(WiFi* p):pWifi(p){}
+    void set_ip_port(std::string, int);
+
+    bool wifi_connect();
+
+    bool init_timestamp();
+    bool send_records(json j);
 };
 
 #endif 

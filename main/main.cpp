@@ -5,16 +5,13 @@
  * Giorgio Pizzuto
  * Vincenzo Topazio
  */
-
 /**
  * LOG FUNCTIONS:
+ * ESP_LOGE() -> ERROR
+ * ESP_LOGW() -> WARNING
  * ESP_LOGI() -> INFO
  * ESP_LOGD() -> DEBUG (NORMALLY DOES NOT PRINT)
- * ESP_LOGE() -> ERROR
  */
-
-//
-
 
 #include "main.h"
 
@@ -22,23 +19,50 @@
 #include "Server.h"
 #include "Sender.h"
 
-#include "lwip/apps/sntp.h"
+int volatile IS_WIFI_CONNECTED = 0;
 
-//Tag used for ESP32 log functions 
+// Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
 
-/* Variable holding number of times ESP32 restarted since first boot.
+/** Variable holding number of times ESP32 restarted since first boot.
  * It is placed into RTC memory using RTC_DATA_ATTR and
  * maintains its value when ESP32 wakes from deep sleep.
  */
 RTC_DATA_ATTR static int boot_count = 0;
 
-WiFi* pWifi;
-time_t boot_time;
+/**
+ * It blinks the led at a frequency of ms_freq
+ * stored in pvParameter
+ * 
+ * @param pointer to int that represents ms_freq
+ */
+void led_blink(void *pvParameter){
+	int ms_freq_standard = RETRY_PERIOD_MS/2;
+	int* ms_freq_ptr = &ms_freq_standard;
+	if(pvParameter != NULL){
+		ms_freq_ptr = (int*) (pvParameter);
+	}
+	int ms_freq = *ms_freq_ptr;
+	while(1){
+		vTaskDelay( pdMS_TO_TICKS(ms_freq/2) );
+		gpio_set_level(BLINK_GPIO, 0);
+		vTaskDelay( pdMS_TO_TICKS(ms_freq/2) );
+		gpio_set_level(BLINK_GPIO, 1);
+	}
+}
 
-//Class used to define callback to call along with specific WiFi events
-class MyEventHandler: public WiFiEventHandler {
-	/* The event handler provides over-rides for:
+/**
+ * Class used to define callback to call along with specific WiFi events
+ */
+class MyEventHandler: public WiFiEventHandler {	
+public:
+	MyEventHandler(WiFi* p){
+		pWifi = p;
+	}
+private:
+	WiFi* pWifi;
+
+	/* // The event handler provides over-rides for:
 	virtual esp_err_t apStaConnected(system_event_ap_staconnected_t info);
 	virtual esp_err_t apStaDisconnected(system_event_ap_stadisconnected_t info);
 	virtual esp_err_t apStart();
@@ -54,117 +78,79 @@ class MyEventHandler: public WiFiEventHandler {
 	virtual esp_err_t wifiReady();
 	*/
 
-	virtual esp_err_t staGotIp(system_event_sta_got_ip_t e){
-		//xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGD(LOG_TAG, "got IP!");
-    	return ESP_OK;
-	}
-
-	// TODO: LIMITARE IL NUMERO DI TENTATIVI DI RICONNESSIONE
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGD(LOG_TAG, "disconnected! Retrying to reconnect...");
-		while(!pWifi->isConnectedToAP()){
-			pWifi->connectAP(WIFI_SSID, WIFI_PASS);
-			vTaskDelay(5000 / portTICK_RATE_MS);
-		}
-		
+		ESP_LOGE(LOG_TAG, "WAS_WIFI_CONNECTED?: %d -> NOW IS 0", IS_WIFI_CONNECTED);
+		IS_WIFI_CONNECTED = 0;
     	return ESP_OK;
 	}
 };
 
+void setup_client(void *pvParameter){
 
-///////////////////////BLOCCO SNTP
-/**
- * @TODO: spostare in classe apposita
- * 
- */
-static void initialize_sntp(void)
-{
-    ESP_LOGI(LOG_TAG, "Initializing SNTP");
-    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    sntp_setservername(0, "pool.ntp.org");
-    sntp_init();
+	// SET THE GPIO PORT FOR BLINKING THE LED
+	gpio_pad_select_gpio(BLINK_GPIO);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+
+	// WHEN THE ESP32 SLEEPS, EVERY SLEEP_SECS the esp32 will be awaken
+	esp_sleep_enable_timer_wakeup(SLEEP_SECS*1000000);
+
+	// SET THE LEVEL OF THE LOGGER
+	// If you don't set the level to DEBUG LEVEL, it does not print
+	// the debug log but just the ERROR and INFO log messages
+	// TODO: NOT WORKING 
+	esp_log_level_set("*", ESP_LOG_DEBUG);
+
+	ESP_LOGW(LOG_TAG, "+++++ WELCOME TO THE ESP32 SNIFFER 4 INDOOR LOCALIZATION +++++");
+	ESP_LOGD(LOG_TAG, "LEVEL OF LOG SET TO DEBUG");
+
+	ESP_LOGI(LOG_TAG, ">>> BOOT COUNT: %d <<<", ++boot_count);
+
+	// SETUP WIFI STRUCTURE
+	WiFi wifi = WiFi();
+	wifi.setWifiEventHandler(new MyEventHandler(&wifi));
+
+	Server server(&wifi);
+	server.set_ip_port(SERVER_IP, SERVER_PORT);
+
+	Sender sender(&server, LISTEN_PERIOD_MS);
+	Sniffer sniffer(&sender);
+
+	while(1){
+		bool connected = server.wifi_connect();
+		if(!connected){
+			//esp_restart();
+			esp_deep_sleep_start();
+		}
+
+		bool got_timestamp = server.init_timestamp();
+		if(!got_timestamp){
+			if(!IS_WIFI_CONNECTED){
+				continue;
+			}else{
+				esp_deep_sleep_start();
+			}
+		}
+
+		// It is in an infinite loop that breaks only when the WiFi 
+		// connection is not available anymore
+		sniffer.init();
+		sniffer.stop();
+	}
 }
 
 /**
- * @TODO: spostare in classe apposita
- * 
- */
-static void obtain_time(void)
-{
-    initialize_sntp();
-
-    // wait for time to be set
-    time_t now = 0;
-    struct tm timeinfo = { 0 };
-    int retry = 0;
-    const int retry_count = 10;
-    while(timeinfo.tm_year < (2016 - 1900) && ++retry < retry_count) {
-        ESP_LOGI(LOG_TAG, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-        time(&now);
-        localtime_r(&now, &timeinfo);
-    }
-}
-
-void set_time(unsigned time_elapsed){
-	time_t now;
-    struct tm timeinfo;
-    time(&now);
-    localtime_r(&now, &timeinfo);
-
-    // Is time set? If not, tm_year will be (1970 - 1900).
-    if (timeinfo.tm_year < (2016 - 1900)) {
-        ESP_LOGI(LOG_TAG, "Time is not set yet. Connecting to WiFi and getting time over NTP.");
-        obtain_time();
-        // update 'now' variable with current time
-        time(&now);
-    }
-	
-	char timeString[100];
-	struct tm *ptm = gmtime(&now);
-	strftime(timeString, sizeof(timeString), "%FT%TZ", ptm);
-	printf("time set to: %s", timeString);
-
-
-	// TODO: modo grezzo di ottenere il boot time, usare API
-	boot_time = now - time_elapsed;
-}
-
-/**
- * @TODO: aggiungere sincronizzazione tempo con server
- * 
+ * Incredibly this is the start point of the program
  */
 void app_main(void)
 {
-	++boot_count;
-	ESP_LOGI(LOG_TAG, "Boot count: %d", boot_count);
+	BaseType_t xReturned;
+	TaskHandle_t xHandle = NULL;
 
-	//PRINT DEBUG LOG
-	esp_log_level_set("*", ESP_LOG_DEBUG);
+	xReturned = xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, &xHandle );
 
-	//SETUP WIFI
-	WiFi wifi = WiFi(); //calling WiFi::init inside the constructor (RAII)
-
-	unsigned time1 = xTaskGetTickCount()*portTICK_RATE_MS/1000;
-
-	pWifi = &wifi;
-	wifi.setWifiEventHandler(new MyEventHandler());
-
-	//connect to WIFI_SSID network
-	wifi.connectAP(WIFI_SSID, WIFI_PASS);	
-	//std::cout << "IP AP: " << wifi.getApIp() << std::endl;
-
-	unsigned wifi_time = xTaskGetTickCount()*portTICK_RATE_MS/1000 - time1;
-	printf("WiFi TIME: %u s\n", wifi_time);
-	set_time(wifi_time);
-
-	Server server;
-	while(1){
-		server.setIpPort(SERVER_IP, SERVER_PORT);
-		Sender sender(&server, 10000);
-		Sniffer sniffer(&sender);
-		sniffer.init();
-	}
+	if( xReturned != pdPASS ){
+        ESP_LOGE(LOG_TAG, "Cannot create task");
+    }
 }

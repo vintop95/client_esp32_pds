@@ -6,6 +6,8 @@
  * Vincenzo Topazio
  */
 #include "Sender.h"
+#include <time.h>
+#include <sys/time.h>
 
 static const char* LOG_TAG = "Sender";
 
@@ -18,8 +20,7 @@ void callback(FreeRTOSTimer *pTimer);
  * @brief Sender constructor
  */
 Sender::Sender(Server* srv, int ms): msListenPeriod(ms), 
-    timer((char*)"listenTimer",
-    pdMS_TO_TICKS(msListenPeriod),
+    timer((char*)"listenTimer", pdMS_TO_TICKS(msListenPeriod),
     pdTRUE, this, &callback),
     server(srv)
 {
@@ -47,38 +48,25 @@ void to_json(json& j, const Record& r) {
 }
 
 /**
- * @brief It sends the records to the server
+ * It sends the records to the server
  * This function works together with 'ClientHandler::readyRead()' function
  * in the server
  * 
- * @return 0 if all went well, otherwise a number != 0
+ * @return true if all went well, false otherwise
  */
-int Sender::sendRecordsToServer(){
-    json j;
-    int res = 0;
-    
+bool Sender::sendRecordsToServer(){
+
+    bool recordsAreSent = false;
+
     if(records.size() != 0){
         ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
 
-        //esp_wifi_set_promiscuous(false);
-        res = server->connect();
-
-        if (res != 0){
-            return -1;
-        }
-
-        j = records;
+        json j = records;
+        recordsAreSent = server->send_records(j);
         records.clear();
-
-        server->sendData(j);
-        res = server->waitAck();
-
-        server->sendEnd();
-        server->close();
-        //esp_wifi_set_promiscuous(true);
     }
 
-    return res;
+    return recordsAreSent;
 }
 
 /**
@@ -93,9 +81,9 @@ void Sender::push_back(Record r){
 }
 
 /**
- * @brief Starts the timer.
+ * @brief Starts the timer for sending periodically the records.
  */
-void Sender::start_timer(){
+void Sender::startSendingTimer(){
 	timer.start();
 }
 
@@ -107,15 +95,16 @@ void Sender::start_timer(){
  * @return N/A.
  */
 void callback(FreeRTOSTimer *pTimer) {
-    //TODO: Ho commentato le linee set_promiscous
-    //perché causavano malfunzionamenti
+    // TODO: Ho commentato le linee set_promiscous
+    // perché causavano malfunzionamenti
 
-    Sender* pSender = (Sender *)pTimer->getData();
-    //esp_wifi_set_promiscuous(false);
+    // esp_wifi_set_promiscuous(false);
 
-    pSender->sendRecordsToServer();
+    if(IS_WIFI_CONNECTED){
+        Sender* pSender = (Sender *)pTimer->getData();
+        pSender->sendRecordsToServer();
+    }
 
-    //cout << "Timer scaduto";
-    //esp_wifi_set_promiscuous(true);
+    // esp_wifi_set_promiscuous(true);
 }
 

@@ -24,6 +24,8 @@
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 
+#include "driver/gpio.h"
+
 #include <iostream>
 #include <string>
 #include <string.h>
@@ -33,24 +35,19 @@
 #include "WiFi.h"
 #include "FreeRTOSTimer.h"
 #include "json.hpp"
+
+#include "params.h"
 using json = nlohmann::json;
 using namespace std;
 
-
-
-// #define WIFI_SSID "CUTRE-TPS" //CONFIG_ESP_WIFI_SSID
-// #define WIFI_PASS "Einaudi1935!" //CONFIG_ESP_WIFI_PASSWORD
-// #define SERVER_IP "172.16.139.251" //"192.168.43.5"
-
-// VT: needed to connect in a wifi network
-// modify Kconfig.projbuild to add config parameters like this
-// to set them use make menuconfig or modify sdkconfig
-#define DEVICE_NAME CONFIG_DEVICE_NAME //"ESP0"
-#define WIFI_SSID CONFIG_ESP_WIFI_SSID
-#define WIFI_PASS CONFIG_ESP_WIFI_PASSWORD
-#define SERVER_IP CONFIG_SERVER_IP //"192.168.43.5"
-
 #define SERVER_PORT 7856
+#define BLINK_GPIO (gpio_num_t)2
+
+#define LISTEN_PERIOD_MS 60*1000
+#define WIFI_LISTEN_CHANNEL 1
+#define RETRY_PERIOD_MS 3*1000
+#define MAX_ATTEMPTS 100
+#define SLEEP_SECS 5*60
 
 //VT: necessary in order to use c++
 extern "C" {
@@ -62,6 +59,8 @@ extern "C" {
 //const int CONNECTED_BIT = BIT0;
 
 extern WiFi* pWifi;
-extern time_t boot_time;
+extern volatile int IS_WIFI_CONNECTED;
+
+void led_blink(void *pvParameter);
 
 #endif

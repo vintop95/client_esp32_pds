@@ -8,6 +8,7 @@
 #include "Sniffer.h"
 
 static const char* LOG_TAG = "Sniffer";
+void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type);
 
 /**
  * @brief Pointer to a Sender defined out here in order
@@ -26,6 +27,37 @@ Sender* pSender;
 Sniffer::Sniffer(Sender* sndr)
 {  
     pSender = sndr;
+}
+
+Sniffer::~Sniffer()
+{
+    this->stop();
+}
+
+/**
+ * @brief Initialize the Sniffer, enabling promiscuous mode
+ * and setting the callback
+ * 
+ * @return N/A.
+ */
+void Sniffer::init(){
+    esp_wifi_set_promiscuous(true);
+    ESP_LOGI(LOG_TAG, "Start sniffing\n");
+    esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
+
+    wifi_sniffer_loop_channels();
+}
+
+/**
+ * @brief Deinitialize the Sniffer, 
+ * disabling the promiscous mode and unsetting the callback
+ * 
+ * @return N/A.
+ */
+void Sniffer::stop(){
+    ESP_LOGE(LOG_TAG, "Stop sniffing...\n");
+    esp_wifi_set_promiscuous(false);
+    esp_wifi_set_promiscuous_rx_cb(NULL);
 }
 
 /**
@@ -122,8 +154,6 @@ void printBits(unsigned num)
    }
 }
 
-static unsigned last_time = 0;
-static int times_restart = 0;
 /**
  * @brief Callback that handles the sniffed packet
  * It must push back to the list of records the following fields:
@@ -162,6 +192,8 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
         return;
     }
     
+    gpio_set_level(BLINK_GPIO, 0);
+
     ////DEBUG: stampa contenuto della variabile ipkt
     //printf("SIZEOF wifi_header_frame_control_t: %d\n", sizeof(wifi_header_frame_control_t));
     // unsigned char *p = (unsigned char *)ipkt;
@@ -197,75 +229,48 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     ////
     
     unsigned int pkt_size = ppkt->rx_ctrl.sig_len;
-    printf("PACKET SIZE: %u B \n", ppkt->rx_ctrl.sig_len);
+    printf("PKT SIZE: %u B, ", ppkt->rx_ctrl.sig_len);
     
     unsigned int payload_size = pkt_size - (sizeof(wifi_ieee80211_mac_hdr_t) + 4);
-    printf("PAYLOAD SIZE WITHOUT CRC32: %u B \n", payload_size);
+    printf("PAYLOAD SIZE WITHOUT CRC32: %u B, ", payload_size);
 
     //json structure to send
     Record r;
     r.sender_mac = addr2;
 
-    
-    //TODO: dopo 71 minuti il timestamp dei pkt ricomincia da zero!!!
-    unsigned time_elapsed = ppkt->rx_ctrl.timestamp/1000000;
-
-    if(last_time > time_elapsed){
-        //timestamp ha ricominciato da zero
-        times_restart++;
-    }
-    last_time = time_elapsed;
-
-    //// CALCOLO TIMESTAMP CON xTaskGetTickCount
-    // unsigned from_boot_elapsed = xTaskGetTickCount()*portTICK_RATE_MS/1000;
-    // unsigned delta_time = from_boot_elapsed - (time_elapsed + times_restart*4295);
-    // printf("DELTA TIME: %u s\n", delta_time);
-    // struct timeval tv;
-    // gettimeofday(&tv, NULL); 
-    // unsigned timestamp_final = tv.tv_sec - delta_time;
-    // r.timestamp = timestamp_final;
-    //// 
-
-
-
-    // printf("NOW: %u SEC\n", (unsigned)tv.tv_sec); 
-    // printf("TIMESTAMP TO SEND: %u SEC\n", timestamp_final); 
-    
-    
-
-    // TODO:attenzione, dovrei usare 64bit per il time ma 32bit vanno bene fino al 2030
-    // - ho dichiarato boot_time come var globale che contiene i sec dall'inizio (più o meno)
-    // su time.h ci dovrebbe essere la funzione get_boot_time()
-    r.timestamp = (unsigned)boot_time + ((unsigned)time_elapsed + times_restart*4295);
-
+    //// CALCOLO TIMESTAMP CON GETTIME
     struct timeval tv;
     gettimeofday(&tv, NULL); 
-    unsigned delta_time = tv.tv_sec; //tv.tv_sec - r.timestamp;
-    printf("DELTA TIME: %u s\n", delta_time);
+    r.timestamp = tv.tv_sec;
+    //// 
+
+    // printf("NOW: %u SEC\n", (unsigned)tv.tv_sec); 
+    // printf("TIMESTAMP TO SEND: %u SEC\n", r.timestamp); 
 
     r.rssi = ppkt->rx_ctrl.rssi;
     r.ssid = "";
 
-     printf("payload:\n");
-     for(int i=0; i<pkt_size; ++i){
+    printf("payload:");
+    for(int i=0; i<pkt_size; ++i){
         //printf("%02x ", (unsigned char)ipkt->payload[i]);
         printf("%02x ", ieee80211_pkt_binary[i]);
-     }
+    }
+    printf("\n");
 
     // USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
     // TODO: sto facendo l'hash dell'intero header, non del contenuto del payload
     // perché non mi convince il contenuto, proviamo innanzitutto a vedere se 
     // due board riescono a sniffare lo stesso pacchetto (con stesso hash), se sì
     // vediamo di estendere l'hash all'intero pacchetto.
-    uint8_t shaData[20];
-    esp_sha(SHA1, (const unsigned char*)ieee80211_pkt_binary, 24, shaData); //"ipkt->payload, pkt_size" al posto di "hdrChar, 24"
+    uint8_t shaData[pkt_size];
+    esp_sha(SHA1, ipkt->payload, pkt_size, shaData); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
     unsigned char shaBase64[100];
     size_t outputLen;
     mbedtls_base64_encode(shaBase64, 100, (size_t*)&outputLen, (const unsigned char*)shaData, (size_t)20 );
     std::string str((const char *)shaBase64);
     r.hashed_pkt = str;
 
-    printf("\nTIME ELAPSED: %u SEC\n", ppkt->rx_ctrl.timestamp/1000000);  
+    // printf("\nTIME ELAPSED: %u SEC\n", ppkt->rx_ctrl.timestamp/1000000);  
 	printf("%u %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
         
         r.timestamp,
@@ -285,48 +290,37 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
         r.ssid = ssid;
 
-        printf(", SSID=%s\n", ssid);
+        printf(", SSID=%s", ssid);
     }
-    printf("SHA_BASE64: %s\n", shaBase64);
-    printf("\n");
+    printf(", HASH=%s", shaBase64);
+    printf("\n\n");
 
     //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
+
+    gpio_set_level(BLINK_GPIO, 1);
 }
 
 /**
- * @brief Initialize the Sniffer, enabling promiscuous mode
- * and setting the callback
+ * @brief NECESSARY BUSY WAITING FUNCTION
  * 
- * @return N/A.
- */
-void Sniffer::init(){
-    esp_wifi_set_promiscuous(true);
-    ESP_LOGI(LOG_TAG, "initialized: setting sniffed packet handler callback\n");
-    // Sets callback for handling packet received
-    esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
-    wifi_sniffer_loop_channels();
-}
-
-/**
- * @brief It loops wifi channels.
+ * Originally it looped the wifi channels.
  * The assignment says to listen to just one channel, but listen
  * to more channels could be useful.
  * 
  * @return N/A.
  */
 void Sniffer::wifi_sniffer_loop_channels(){
-	uint8_t channel = 1;
+	uint8_t channel = WIFI_LISTEN_CHANNEL;
     esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-    pSender->start_timer();
+    pSender->startSendingTimer();
     
-    while (true) {
+    while (IS_WIFI_CONNECTED) {
         // loop all channels
-        vTaskDelay(WIFI_CHANNEL_SWITCH_INTERVAL / portTICK_PERIOD_MS);
+        vTaskDelay( pdMS_TO_TICKS(WIFI_CHANNEL_SWITCH_INTERVAL) );
         
         // IT CHANGES CHANNEL, DISABLED BECAUSE OF CONFLICTS WITH SENDING TO THE SERVER
         // esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-
         // channel = (channel % WIFI_CHANNEL_MAX) + 1;
     }
 

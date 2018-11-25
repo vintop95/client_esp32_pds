@@ -55,7 +55,7 @@ WiFi::WiFi()
 	m_eventLoopStarted  = false;
 	m_initCalled        = false;
 	//m_pWifiEventHandler = new WiFiEventHandler();
-	m_apConnectionStatus       = UINT8_MAX;    // Are we connected to an access point?
+	m_apConnectionStatus = UINT8_MAX;// Are we connected to an access point?
 	init();
 } // WiFi
 
@@ -195,7 +195,8 @@ uint8_t WiFi::connectAP(const std::string& ssid, const std::string& password, bo
 		abort();
 	}
 
-	m_connectFinished.take("connectAP");   // Take the semaphore to wait for a connection.
+	// MODIFIED BY VINCENZO TOPAZIO
+	// m_connectFinished.take("connectAP");   // Take the semaphore to wait for a connection.
     do {
         ESP_LOGD(LOG_TAG, "esp_wifi_connect");
         errRc = ::esp_wifi_connect();
@@ -230,7 +231,8 @@ void WiFi::dump() {
  * @brief Returns whether wifi is connected to an access point
  */
 bool WiFi::isConnectedToAP() {
-	return m_apConnectionStatus;
+	// MODIFIED BY VINCENZO TOPAZIO
+	return ( m_apConnectionStatus==0 ? true : false);
 } // isConnected
 
 
@@ -262,6 +264,7 @@ bool WiFi::isConnectedToAP() {
 			pWiFi->m_apConnectionStatus = ESP_OK;
 		} else {
 			pWiFi->m_apConnectionStatus = event->event_info.disconnected.reason;
+			ESP_LOGE(LOG_TAG, "disconnected."); //ADDED BY VINCENZO TOPAZIO
 		}
 		pWiFi->m_connectFinished.give();
 	}
