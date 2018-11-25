@@ -161,7 +161,7 @@ bool Server::send_records(json j){
  * @return true if all went well, false otherwise
  */
 bool Server::init_timestamp(){
-	bool timeProtocolWentWell;
+	bool timeProtocolWentWell = false;
     uint32_t timestamp = 0;
 	int attempts = 0;
 
@@ -180,7 +180,10 @@ bool Server::init_timestamp(){
         timeProtocolWentWell = wait_ack(&timestamp);
 
         this->close();
-    }while( IS_WIFI_CONNECTED && !timeProtocolWentWell && attempts < MAX_ATTEMPTS );
+    }while( IS_WIFI_CONNECTED && !timeProtocolWentWell && attempts < MAX_ATTEMPTS*(RETRY_PERIOD_MS)/(20*1000) ); 
+	// MAX_ATTEMPTS*RETRY_PERIOD/20: RIADATTARE I TENTATIVI MASSIMI A UNA DURATA SIMILE A 
+	// QUELLA CHE SI HA CON I MAX_ATTEMPTS PER CONNETTERSI AL WIFI
+	// VISTO CHE 20 SONO I SECONDI DI TIMEOUT TCP
 
 	// TURN OFF THE FAST BLINKING OF SERVER CONNECTING
 	// IF WIFI DISCONNECTED BECAUSE NOW WE RETRY TO CONNECT TO WIFI
