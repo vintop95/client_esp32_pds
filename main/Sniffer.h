@@ -41,7 +41,7 @@ public:
     Sniffer(Sender* sndr);
     ~Sniffer();
     void init();
-    void close();
+    void stop();
 };
 
 /**

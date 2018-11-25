@@ -31,7 +31,7 @@ Sniffer::Sniffer(Sender* sndr)
 
 Sniffer::~Sniffer()
 {
-    this->close();
+    this->stop();
 }
 
 /**
@@ -48,7 +48,13 @@ void Sniffer::init(){
     wifi_sniffer_loop_channels();
 }
 
-void Sniffer::close(){
+/**
+ * @brief Deinitialize the Sniffer, 
+ * disabling the promiscous mode and unsetting the callback
+ * 
+ * @return N/A.
+ */
+void Sniffer::stop(){
     ESP_LOGE(LOG_TAG, "Stop sniffing...\n");
     esp_wifi_set_promiscuous(false);
     esp_wifi_set_promiscuous_rx_cb(NULL);
@@ -246,8 +252,8 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     printf("payload:");
     for(int i=0; i<pkt_size; ++i){
-    //printf("%02x ", (unsigned char)ipkt->payload[i]);
-    printf("%02x ", ieee80211_pkt_binary[i]);
+        //printf("%02x ", (unsigned char)ipkt->payload[i]);
+        printf("%02x ", ieee80211_pkt_binary[i]);
     }
     printf("\n");
 
@@ -296,7 +302,9 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 }
 
 /**
- * @brief It loops wifi channels.
+ * @brief NECESSARY BUSY WAITING FUNCTION
+ * 
+ * Originally it looped the wifi channels.
  * The assignment says to listen to just one channel, but listen
  * to more channels could be useful.
  * 
@@ -305,7 +313,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 void Sniffer::wifi_sniffer_loop_channels(){
 	uint8_t channel = WIFI_LISTEN_CHANNEL;
     esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
-    pSender->start_timer();
+    pSender->startSendingTimer();
     
     while (IS_WIFI_CONNECTED) {
         // loop all channels

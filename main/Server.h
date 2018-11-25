@@ -34,28 +34,31 @@
 class Server {
 private:
     WiFi* pWifi;
-    int s;//socket
-    string ipStr;
+    int s; // socket
     int port;
+    string ipStr;
     TaskHandle_t ledBlinkTask = NULL;
 
-    int send(std::string str);
-    int send(json); 
-public:
-    Server(WiFi* p):pWifi(p){}
-    void setIpPort(std::string, int);
+    bool connect();
 
-    int wifi_connect();
-    int connect();
+    bool send(std::string str);
 
-    int init_timestamp();
-    
-    int sendInit(json j);
-    int sendData(json j);
-    int sendEnd();
-    int waitAck(uint32_t* time_ptr = nullptr);
+    bool send_init(json j);
+    bool send_data(json j);
+    bool send_end();
+
+    bool wait_ack(uint32_t* time_ptr = nullptr);
 
     void close();
+
+public:
+    Server(WiFi* p):pWifi(p){}
+    void set_ip_port(std::string, int);
+
+    bool wifi_connect();
+
+    bool init_timestamp();
+    bool send_records(json j);
 };
 
 #endif 

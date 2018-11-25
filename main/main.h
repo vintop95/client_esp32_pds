@@ -41,13 +41,13 @@ using json = nlohmann::json;
 using namespace std;
 
 #define SERVER_PORT 7856
-#define BLINK_GPIO (gpio_num_t) 2
+#define BLINK_GPIO (gpio_num_t)2
 
-#define LISTEN_PERIOD_MS 60000
+#define LISTEN_PERIOD_MS 60*1000
 #define WIFI_LISTEN_CHANNEL 1
-#define RETRY_PERIOD_MS 3000
-#define MAX_ATTEMPTS 10
-#define SLEEP_SECS 10
+#define RETRY_PERIOD_MS 3*1000
+#define MAX_ATTEMPTS 100
+#define SLEEP_SECS 5*60
 
 //VT: necessary in order to use c++
 extern "C" {
@@ -60,5 +60,7 @@ extern "C" {
 
 extern WiFi* pWifi;
 extern int IS_WIFI_CONNECTED;
+
+void led_blink(void *pvParameter);
 
 #endif

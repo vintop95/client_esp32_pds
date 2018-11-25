@@ -31,6 +31,27 @@ static const char *LOG_TAG = "main";
 RTC_DATA_ATTR static int boot_count = 0;
 
 /**
+ * It blinks the led at a frequency of ms_freq
+ * stored in pvParameter
+ * 
+ * @param pointer to int that represents ms_freq
+ */
+void led_blink(void *pvParameter){
+	int ms_freq_standard = RETRY_PERIOD_MS/2;
+	int* ms_freq_ptr = &ms_freq_standard;
+	if(pvParameter != NULL){
+		ms_freq_ptr = (int*) (pvParameter);
+	}
+	int ms_freq = *ms_freq_ptr;
+	while(1){
+		vTaskDelay( pdMS_TO_TICKS(ms_freq/2) );
+		gpio_set_level(BLINK_GPIO, 0);
+		vTaskDelay( pdMS_TO_TICKS(ms_freq/2) );
+		gpio_set_level(BLINK_GPIO, 1);
+	}
+}
+
+/**
  * Class used to define callback to call along with specific WiFi events
  */
 class MyEventHandler: public WiFiEventHandler {	
@@ -97,6 +118,9 @@ void setup_client(void *pvParameter){
 	// pulsante accanto quello per il reboot
 	esp_sleep_enable_touchpad_wakeup();
 
+	// WHEN THE ESP32 SLEEPS, EVERY SLEEP_SECS the esp32 will be awaken
+	esp_sleep_enable_timer_wakeup(SLEEP_SECS*1000000);
+
 	// SET THE LEVEL OF THE LOGGER
 	// If you don't set the level to DEBUG LEVEL, it does not print
 	// the debug log but just the ERROR and INFO log messages
@@ -113,27 +137,27 @@ void setup_client(void *pvParameter){
 	wifi.setWifiEventHandler(new MyEventHandler(&wifi));
 
 	Server server(&wifi);
-	server.setIpPort(SERVER_IP, SERVER_PORT);
+	server.set_ip_port(SERVER_IP, SERVER_PORT);
 
 	Sender sender(&server, LISTEN_PERIOD_MS);
 	Sniffer sniffer(&sender);
 
 	while(1){
-		int resConnection = server.wifi_connect();
-		if(resConnection != 0){
+		bool connected = server.wifi_connect();
+		if(!connected){
 			//esp_restart();
-			esp_sleep_enable_timer_wakeup(SLEEP_SECS*1000000);
 			esp_deep_sleep_start();
 		}
 
-		int got_timestamp = server.init_timestamp();
-		
+		bool got_timestamp = server.init_timestamp();
+		if(!got_timestamp){
+			continue;
+		}
+
 		// It is in an infinite loop that breaks only when the WiFi 
 		// connection is not available anymore
-		if(got_timestamp == 0){
-			sniffer.init();
-			sniffer.close();
-		}
+		sniffer.init();
+		sniffer.stop();
 	}
 }
 
@@ -148,8 +172,7 @@ void app_main(void)
 	// TODO: check if the stack (4096) is enough
 	xReturned = xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, &xHandle );
 
-	if( xReturned != pdPASS )
-    {
+	if( xReturned != pdPASS ){
         ESP_LOGE(LOG_TAG, "Cannot create task");
     }
 }

@@ -35,17 +35,16 @@ private:
     int msListenPeriod;
     std::vector<Record> records;
     FreeRTOSTimer timer;
+
+    bool sendRecordsToServer();
+    friend void callback(FreeRTOSTimer *);
+    friend void to_json(json& j, const Record& r);
 public:
     Server* server;
     Sender(Server* srv, int ms);
-    int sendRecordsToServer();
-    int getListenPeriod(){
-        return msListenPeriod;
-    }
-    void push_back(Record r);
-    void start_timer();
-    friend void to_json(json& j, const Record& r);
 
+    void push_back(Record r);
+    void startSendingTimer();
 };
 
 #endif 
