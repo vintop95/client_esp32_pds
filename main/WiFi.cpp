@@ -264,6 +264,7 @@ bool WiFi::isConnectedToAP() {
 			pWiFi->m_apConnectionStatus = ESP_OK;
 		} else {
 			pWiFi->m_apConnectionStatus = event->event_info.disconnected.reason;
+			ESP_LOGE(LOG_TAG, "disconnected."); //ADDED BY VINCENZO TOPAZIO
 		}
 		pWiFi->m_connectFinished.give();
 	}

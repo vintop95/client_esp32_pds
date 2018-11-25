@@ -39,6 +39,7 @@ private:
                 wifi_promiscuous_pkt_type_t);
 public:
     Sniffer(Sender* sndr);
+    ~Sniffer();
     void init();
 };
 

@@ -8,6 +8,7 @@
 #include "Sniffer.h"
 
 static const char* LOG_TAG = "Sniffer";
+void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type);
 
 /**
  * @brief Pointer to a Sender defined out here in order
@@ -26,6 +27,27 @@ Sender* pSender;
 Sniffer::Sniffer(Sender* sndr)
 {  
     pSender = sndr;
+}
+
+Sniffer::~Sniffer()
+{
+    ESP_LOGE(LOG_TAG, "Destroying myself, time to die\n");
+    esp_wifi_set_promiscuous(false);
+    esp_wifi_set_promiscuous_rx_cb(NULL);
+}
+
+/**
+ * @brief Initialize the Sniffer, enabling promiscuous mode
+ * and setting the callback
+ * 
+ * @return N/A.
+ */
+void Sniffer::init(){
+    esp_wifi_set_promiscuous(true);
+    ESP_LOGI(LOG_TAG, "initialized: setting sniffed packet handler callback\n");
+    esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
+
+    wifi_sniffer_loop_channels();
 }
 
 /**
@@ -266,20 +288,6 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 }
 
 /**
- * @brief Initialize the Sniffer, enabling promiscuous mode
- * and setting the callback
- * 
- * @return N/A.
- */
-void Sniffer::init(){
-    esp_wifi_set_promiscuous(true);
-    ESP_LOGI(LOG_TAG, "initialized: setting sniffed packet handler callback\n");
-    // Sets callback for handling packet received
-    esp_wifi_set_promiscuous_rx_cb(&wifi_sniffer_packet_handler);
-    wifi_sniffer_loop_channels();
-}
-
-/**
  * @brief It loops wifi channels.
  * The assignment says to listen to just one channel, but listen
  * to more channels could be useful.
@@ -291,7 +299,7 @@ void Sniffer::wifi_sniffer_loop_channels(){
     esp_wifi_set_channel(channel, WIFI_SECOND_CHAN_NONE);
     pSender->start_timer();
     
-    while (true) {
+    while (BOOT_OK) {
         // loop all channels
         vTaskDelay( pdMS_TO_TICKS(WIFI_CHANNEL_SWITCH_INTERVAL) );
         

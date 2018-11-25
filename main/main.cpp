@@ -22,7 +22,7 @@
 #include "driver/gpio.h"
 #define BLINK_GPIO (gpio_num_t) 2
 
-static int BOOT_OK = 0;
+int BOOT_OK = 0;
 
 // Tag used for ESP32 log functions 
 static const char *LOG_TAG = "main";
@@ -35,9 +35,6 @@ RTC_DATA_ATTR static int boot_count = 0;
 
 void retry_reconnect(WiFi* pWifi){
 	int attempts = 0;
-	gpio_pad_select_gpio(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 	while(!pWifi->isConnectedToAP()){
 		++attempts;
 		ESP_LOGI(LOG_TAG, "CONNECT TO WIFI: ATTEMPT #%d", attempts);
@@ -77,24 +74,42 @@ private:
 	virtual esp_err_t wifiReady();
 	*/
 
+	
+	virtual esp_err_t apStart() {
+	return ESP_OK;
+	}
+	virtual esp_err_t staConnected() {
+	return ESP_OK;
+	}
+	virtual esp_err_t staStart() {
+	return ESP_OK;
+	}
+	virtual esp_err_t wifiReady() {
+	return ESP_OK;
+	}
+
 	virtual esp_err_t staGotIp(system_event_sta_got_ip_t e){
 		//xEventGroupSetBits(wifi_event_group, CONNECTED_BIT);
-		ESP_LOGD(LOG_TAG, "got IP!");
     	return ESP_OK;
 	}
 
 	// TODO: LIMITARE IL NUMERO DI TENTATIVI DI RICONNESSIONE
 	virtual esp_err_t staDisconnected(system_event_sta_disconnected_t info){
 		//xEventGroupClearBits(wifi_event_group, CONNECTED_BIT);
+		ESP_LOGE(LOG_TAG, "BOOT OK: %d", BOOT_OK);
 		if(BOOT_OK){
-			ESP_LOGE(LOG_TAG, "disconnected! Retrying to reconnect...");
-			retry_reconnect(pWifi);	
+			BOOT_OK = 0;
 		}	
     	return ESP_OK;
 	}
 };
 
 void setup_client(void *pvParameter){
+
+	// SET THE GPIO PORT FOR BLINKING THE LED
+	gpio_pad_select_gpio(BLINK_GPIO);
+    /* Set the GPIO as a push/pull output */
+    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 
 	// SET THE LEVEL OF THE LOGGER
 	// If you don't set the level to DEBUG LEVEL, it does not print
@@ -108,12 +123,12 @@ void setup_client(void *pvParameter){
 	++boot_count;
 	ESP_LOGI(LOG_TAG, ">>> BOOT COUNT: %d <<<", boot_count);
 
+	Server server;
+	server.setIpPort(SERVER_IP, SERVER_PORT);
 	// SETUP WIFI STRUCTURE
 	WiFi wifi = WiFi();
 	wifi.setWifiEventHandler(new MyEventHandler(&wifi));
-		
-	Server server;
-	server.setIpPort(SERVER_IP, SERVER_PORT);
+
 	while(1){
 		retry_reconnect(&wifi);
 		BOOT_OK = 1;
@@ -129,6 +144,17 @@ void setup_client(void *pvParameter){
  */
 void app_main(void)
 {
+	BaseType_t xReturned;
+	TaskHandle_t xHandle = NULL;
+
+
 	// TODO: check if the stack (4096) is enough
-	xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, NULL );
+	xReturned = xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, &xHandle );
+	//when the task is terminated, it must restart for resetting the sender and sniffer
+
+	/* The task was created.  Use the task's handle to delete the task. */
+	// if( xReturned == pdPASS )
+    // {
+    //     vTaskDelete( xHandle );
+    // }
 }
