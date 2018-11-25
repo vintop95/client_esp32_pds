@@ -154,6 +154,16 @@ void printBits(unsigned num)
    }
 }
 
+void printf_date(time_t timestamp){
+	char buffer[26];
+    struct tm* tm_info;
+
+    tm_info = localtime(&timestamp);
+
+    strftime(buffer, 26, "[%Y-%m-%d %H:%M:%S]", tm_info);
+    printf("%s", buffer);
+}
+
 /**
  * @brief Callback that handles the sniffed packet
  * It must push back to the list of records the following fields:
@@ -270,8 +280,8 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     std::string str((const char *)shaBase64);
     r.hashed_pkt = str;
 
-    // printf("\nTIME ELAPSED: %u SEC\n", ppkt->rx_ctrl.timestamp/1000000);  
-	printf("%u %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
+    printf_date(r.timestamp);
+	printf(" %u %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
         
         r.timestamp,
 		wifi_pkt_type2str((wifi_promiscuous_pkt_type_t)frame_ctrl->type, (wifi_mgmt_subtypes_t)frame_ctrl->subtype),
@@ -290,9 +300,9 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
         r.ssid = ssid;
 
-        printf(", SSID=%s", ssid);
+        printf(", SSID=\"%s\"", ssid);
     }
-    printf(", HASH=%s", shaBase64);
+    printf(", HASH=\"%s\"", shaBase64);
     printf("\n\n");
 
     //aggiungi il record alla lista di record da inviare
