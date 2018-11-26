@@ -155,13 +155,13 @@ void printBits(unsigned num)
 }
 
 void printf_date(time_t timestamp){
-	char buffer[26];
+	char buffer[24];
     struct tm* tm_info;
 
     tm_info = localtime(&timestamp);
 
-    strftime(buffer, 26, "[%Y-%m-%d %H:%M:%S]", tm_info);
-    printf("%s", buffer);
+    strftime(buffer, 24, "%Y-%m-%d %H:%M:%S", tm_info);
+    printf("[\033[0;32m%s\033[0m]", buffer);
 }
 
 /**
@@ -226,52 +226,60 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     //     return;
     // }
 
-    // Size of the packet
+    printf("\033[1;33m");
+    printf("===============================================================================\n");
+    printf("\033[0m");
+
+    // 0) Size of the packet
     /**< length of packet including Frame Check Sequence(FCS) - 12 bit field*/
-        
-    // printf("PACKET SIZE IN BITS: \n");
-    // printBits(ppkt->rx_ctrl.sig_len);
-    // printf("\n");
-
-    //// e se non ci fosse bisogno di cio?
-    // unsigned short pkt_size_short = (ppkt->rx_ctrl.sig_len << 4) | (ppkt->rx_ctrl.sig_len >> 8);
-    // int pkt_size = (int)pkt_size_short;
-    ////
-    
     unsigned int pkt_size = ppkt->rx_ctrl.sig_len;
-    printf("PKT SIZE: %u B, ", ppkt->rx_ctrl.sig_len);
-    
+    printf("\033[1;33m");
+    printf("PKT_SIZE");
+    printf("\033[0m");
+    printf(": %u B, ", ppkt->rx_ctrl.sig_len);
     unsigned int payload_size = pkt_size - (sizeof(wifi_ieee80211_mac_hdr_t) + 4);
-    printf("PAYLOAD SIZE WITHOUT CRC32: %u B, ", payload_size);
+    printf("\033[1;33m");
+    printf("PAYLOAD_SIZE_WITHOUT_CRC32");
+    printf("\033[0m");
+    printf(": %u B, ", payload_size);
 
-    //json structure to send
+    // JSON TO SEND
     Record r;
+
+    // 1) sender_mac
     r.sender_mac = addr2;
 
+    // 2) timestamp
     //// CALCOLO TIMESTAMP CON GETTIME
     struct timeval tv;
     gettimeofday(&tv, NULL); 
     r.timestamp = tv.tv_sec;
-    //// 
-
-    // printf("NOW: %u SEC\n", (unsigned)tv.tv_sec); 
-    // printf("TIMESTAMP TO SEND: %u SEC\n", r.timestamp); 
 
     r.rssi = ppkt->rx_ctrl.rssi;
-    r.ssid = "";
 
-    printf("payload:");
+    // TAKE THE SSID FROM THE PKT IF ACTUALLY THERE IS ONE
+    r.ssid = "";
+    const wifi_mgmt_probe_req_t *probe_req_frame = (wifi_mgmt_probe_req_t*) ipkt->payload;
+    if(probe_req_frame->length > 0){
+        char ssid[32] = {0};
+        strncpy(ssid, probe_req_frame->ssid, probe_req_frame->length);
+        r.ssid = ssid;
+    }
+    
+    printf("\033[1;33m");
+    printf("PACKET_CONTENT:\n");
+    printf("\033[0m");
     for(int i=0; i<pkt_size; ++i){
         //printf("%02x ", (unsigned char)ipkt->payload[i]);
         printf("%02x ", ieee80211_pkt_binary[i]);
+
+        if((i+1) % 24 == 0){
+            printf("\n");
+        }
     }
     printf("\n");
 
     // USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
-    // TODO: sto facendo l'hash dell'intero header, non del contenuto del payload
-    // perché non mi convince il contenuto, proviamo innanzitutto a vedere se 
-    // due board riescono a sniffare lo stesso pacchetto (con stesso hash), se sì
-    // vediamo di estendere l'hash all'intero pacchetto.
     uint8_t shaData[pkt_size];
     esp_sha(SHA1, ipkt->payload, pkt_size, shaData); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
     unsigned char shaBase64[100];
@@ -279,34 +287,52 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     mbedtls_base64_encode(shaBase64, 100, (size_t*)&outputLen, (const unsigned char*)shaData, (size_t)20 );
     std::string str((const char *)shaBase64);
     r.hashed_pkt = str;
-
-    printf_date(r.timestamp);
-	printf(" %u %s CHAN=%02d, SEQ=%d, RSSI=%02d, SNDR=%s",
-        
-        r.timestamp,
-		wifi_pkt_type2str((wifi_promiscuous_pkt_type_t)frame_ctrl->type, (wifi_mgmt_subtypes_t)frame_ctrl->subtype),
-        ppkt->rx_ctrl.channel,
-        hdr->sequence_ctrl,
-		ppkt->rx_ctrl.rssi,
-        addr2
-	);
-    
-    if (frame_ctrl->type == WIFI_PKT_MGMT && frame_ctrl->subtype == PROBE_REQ)
-    {
-        const wifi_mgmt_probe_req_t *probe_req_frame = (wifi_mgmt_probe_req_t*) ipkt->payload;
-        char ssid[32] = {0};
-
-        strncpy(ssid, probe_req_frame->ssid, probe_req_frame->length);
-
-        r.ssid = ssid;
-
-        printf(", SSID=\"%s\"", ssid);
-    }
-    printf(", HASH=\"%s\"", shaBase64);
-    printf("\n\n");
+    r.seq_num = hdr->sequence_ctrl >> 4; //4 bits are the fragment number
 
     //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
+
+    ///// stampa il pkt ricevuto
+    printf_date(r.timestamp);
+
+    printf("\033[0;36m");
+    printf(" %u", r.timestamp);
+    printf("\033[0m");
+
+    printf(" %s", wifi_pkt_type2str((wifi_promiscuous_pkt_type_t)frame_ctrl->type, (wifi_mgmt_subtypes_t)frame_ctrl->subtype));
+
+    printf(" CHAN=");
+    printf("\033[1;32m");
+    printf("%02d", ppkt->rx_ctrl.channel);
+    printf("\033[0m");
+
+    printf(", SEQ=");
+    printf("\033[0;32m");
+    printf("%d", r.seq_num);
+    printf("\033[0m");
+
+    printf(", RSSI=");
+    printf("\033[1;32m");
+    printf("%02d", ppkt->rx_ctrl.rssi);
+    printf("\033[0m");
+
+    printf(", \n>> SNDR=");
+    printf("\033[1;32m");
+    printf("%s", addr2);
+    printf("\033[0m");
+
+    printf(", SSID=\"");
+    printf("\033[1;32m");
+    printf("%s", r.ssid.c_str());
+    printf("\033[0m");
+
+    printf("\", HASH=\"");
+    printf("\033[1;32m");
+    printf("%s", shaBase64);
+    printf("\033[0m");
+
+    printf("\"\n");
+    /////
 
     gpio_set_level(BLINK_GPIO, 1);
 }

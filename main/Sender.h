@@ -21,6 +21,7 @@ struct Record{
     std::string sender_mac;
     uint32_t timestamp;
     int8_t rssi;
+    int16_t seq_num;
     std::string hashed_pkt;
     std::string ssid;
 };
