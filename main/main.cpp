@@ -31,6 +31,24 @@ static const char *LOG_TAG = "main";
 RTC_DATA_ATTR static int boot_count = 0;
 
 /**
+ * @brief Utility function that gives a string of the mac passed
+ * 
+ * @param Array of 8 bit integers representing the mac address
+ * @param String representing the mac address to return
+ * 
+ * @return N/A
+ */
+void mac2str(const uint8_t* ptr, char* string)
+{
+  #ifdef MASKED
+  sprintf(string, "XX:XX:XX:%02x:%02x:XX", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
+  #else
+  sprintf(string, "%02x:%02x:%02x:%02x:%02x:%02x", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
+  #endif
+  return;
+}
+
+/**
  * It blinks the led at a frequency of ms_freq
  * stored in pvParameter
  * 

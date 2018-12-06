@@ -22,8 +22,9 @@ void callback(FreeRTOSTimer *pTimer);
 Sender::Sender(Server* srv, int ms): msListenPeriod(ms), 
     timer((char*)"listenTimer", pdMS_TO_TICKS(msListenPeriod),
     pdTRUE, this, &callback),
-    server(srv)
+    server(srv)    
 {
+
     //maybe using a task is not the best way
     //but if we need to, here is the functions needed
     //t->setName("Sender");
@@ -40,11 +41,26 @@ Sender::Sender(Server* srv, int ms): msListenPeriod(ms),
  * @return N/A.
  */
 void to_json(json& j, const Record& r) {
-        j = json{{"sender_mac", r.sender_mac},
-                 {"timestamp", r.timestamp},
-                 {"rssi", r.rssi}, 
-                 {"hashed_pkt", r.hashed_pkt}, 
-                 {"ssid", r.ssid}};
+    // ESP_LOGI(LOG_TAG, "START JSON TRANSFORMATION");
+
+    char j_sender_mac[] = "00:00:00:00:00:00";
+    mac2str(r.sender_mac, j_sender_mac);
+    // ESP_LOGI(LOG_TAG, "j_sender_mac: %s", j_sender_mac);
+
+    const int sizeStringSha = 30+1;
+    unsigned char j_hashed_pkt[sizeStringSha];
+    size_t outputLen;
+    mbedtls_base64_encode(j_hashed_pkt, sizeStringSha, (size_t*)&outputLen, (const unsigned char*)r.hashed_pkt, (size_t)20 );
+    // ESP_LOGI(LOG_TAG, "j_hashed_pkt: %s", j_hashed_pkt);
+
+    j = json{
+                {"sender_mac", std::string((const char *)j_sender_mac)},
+                {"timestamp", r.timestamp},
+                {"rssi", r.rssi}, 
+                {"hashed_pkt", std::string((const char *)j_hashed_pkt, outputLen)}, 
+                {"seq_num", r.seq_num}, 
+                {"ssid", std::string((const char *)r.ssid)}
+            };
 }
 
 /**
@@ -58,10 +74,18 @@ bool Sender::sendRecordsToServer(){
 
     bool recordsAreSent = false;
 
-    if(records.size() != 0){
-        ESP_LOGI(LOG_TAG, "SENDING ACCUMULATED RECORDS TO SERVER");
+    int recordsSize = records.size();
+    if(recordsSize != 0){
+        ESP_LOGI(LOG_TAG, "SENDING %d ACCUMULATED RECORDS TO SERVER", recordsSize);
+        json j;
 
-        json j = records;
+        try{
+            while(records.isPoppable()){
+                j.push_back(records.pop());
+            }
+        }catch(std::bad_typeid& e){
+            ESP_LOGE(LOG_TAG, "Trying to pop a null element");
+        }
         recordsAreSent = server->send_records(j);
         records.clear();
     }
@@ -76,8 +100,8 @@ bool Sender::sendRecordsToServer(){
  * 
  * @return N/A
  */
-void Sender::push_back(Record r){
-    records.push_back(r);
+void Sender::push_back(const Record& r){
+    records.push(r);
 }
 
 /**

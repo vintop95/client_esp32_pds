@@ -13,10 +13,6 @@
 
 #include "Sender.h"
 
-#include <hwcrypto/sha.h>
-#include <mbedtls/base64.h>
-#include <sys/time.h>
-
 #define	WIFI_CHANNEL_MAX		        (13)
 #define	WIFI_CHANNEL_SWITCH_INTERVAL	(500)
 

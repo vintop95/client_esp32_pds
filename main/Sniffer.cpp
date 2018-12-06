@@ -61,24 +61,6 @@ void Sniffer::stop(){
 }
 
 /**
- * @brief Utility function that gives a string of the mac passed
- * 
- * @param Array of 8 bit integers representing the mac address
- * @param String representing the mac address to return
- * 
- * @return N/A
- */
-void mac2str(const uint8_t* ptr, char* string)
-{
-  #ifdef MASKED
-  sprintf(string, "XX:XX:XX:%02x:%02x:XX", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
-  #else
-  sprintf(string, "%02x:%02x:%02x:%02x:%02x:%02x", ptr[0], ptr[1], ptr[2], ptr[3], ptr[4], ptr[5]);
-  #endif
-  return;
-}
-
-/**
  * @brief Utility function that gives a string of the packet type
  * 
  * @param Type of the packet received
@@ -213,13 +195,13 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     // printf("\n");
 
     // Parse MAC addresses contained in packet header into human-readable strings
-    char addr1[] = "00:00:00:00:00:00\0";
+    // char addr1[] = "00:00:00:00:00:00\0";
     char addr2[] = "00:00:00:00:00:00\0";
-    char addr3[] = "00:00:00:00:00:00\0";
+    // char addr3[] = "00:00:00:00:00:00\0";
 
-    mac2str(hdr->addr1, addr1);//RECEIVER
+    // mac2str(hdr->addr1, addr1);//RECEIVER
     mac2str(hdr->addr2, addr2);//SENDER
-    mac2str(hdr->addr3, addr3);//FILTERING
+    // mac2str(hdr->addr3, addr3);//FILTERING
 
     ///// DEBUG: FILTER MAC ADDRESS SENDER
     // if(strcmp(addr2, "c0:ee:fb:02:b8:fa") != 0 ){
@@ -247,7 +229,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     Record r;
 
     // 1) sender_mac
-    r.sender_mac = addr2;
+    memcpy(r.sender_mac, hdr->addr2, sizeof(hdr->addr2));
 
     // 2) timestamp
     //// CALCOLO TIMESTAMP CON GETTIME
@@ -255,15 +237,16 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     gettimeofday(&tv, NULL); 
     r.timestamp = tv.tv_sec;
 
+    // 3) rssi
     r.rssi = ppkt->rx_ctrl.rssi;
 
-    // TAKE THE SSID FROM THE PKT IF ACTUALLY THERE IS ONE
-    r.ssid = "";
+    // 4) ssid - TAKE THE SSID FROM THE PKT IF ACTUALLY THERE IS ONE
     const wifi_mgmt_probe_req_t *probe_req_frame = (wifi_mgmt_probe_req_t*) ipkt->payload;
     if(probe_req_frame->length > 0){
-        char ssid[32] = {0};
-        strncpy(ssid, probe_req_frame->ssid, probe_req_frame->length);
-        r.ssid = ssid;
+        strncpy(r.ssid, probe_req_frame->ssid, probe_req_frame->length);
+        r.ssid[probe_req_frame->length] = '\0';
+    }else{
+        r.ssid[0] = '\0';
     }
     
     printf("\033[1;33m");
@@ -279,14 +262,10 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     }
     printf("\n");
 
-    // USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
-    uint8_t shaData[pkt_size];
-    esp_sha(SHA1, ipkt->payload, pkt_size, shaData); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
-    unsigned char shaBase64[100];
-    size_t outputLen;
-    mbedtls_base64_encode(shaBase64, 100, (size_t*)&outputLen, (const unsigned char*)shaData, (size_t)20 );
-    std::string str((const char *)shaBase64);
-    r.hashed_pkt = str;
+    // 5) hashed_pkt - USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
+    esp_sha(SHA1, ipkt->payload, pkt_size, r.hashed_pkt); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
+
+    // 6) seq_num
     r.seq_num = hdr->sequence_ctrl >> 4; //4 bits are the fragment number
 
     //aggiungi il record alla lista di record da inviare
@@ -323,13 +302,13 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     printf(", SSID=\"");
     printf("\033[1;32m");
-    printf("%s", r.ssid.c_str());
+    printf("%s", r.ssid);
     printf("\033[0m");
 
-    printf("\", HASH=\"");
-    printf("\033[1;32m");
-    printf("%s", shaBase64);
-    printf("\033[0m");
+    // printf("\", HASH=\"");
+    // printf("\033[1;32m");
+    // printf("%s", r.hashed_pkt);
+    // printf("\033[0m");
 
     printf("\"\n");
     /////

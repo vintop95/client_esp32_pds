@@ -26,11 +26,16 @@
 
 #include "driver/gpio.h"
 
+#include <hwcrypto/sha.h>
+#include <mbedtls/base64.h>
+#include <sys/time.h>
+
 #include <iostream>
 #include <string>
 #include <string.h>
 #include <vector>
 #include <memory>
+#include <exception>
 
 #include "WiFi.h"
 #include "FreeRTOSTimer.h"
@@ -62,5 +67,6 @@ extern WiFi* pWifi;
 extern volatile int IS_WIFI_CONNECTED;
 
 void led_blink(void *pvParameter);
+void mac2str(const uint8_t* ptr, char* string);
 
 #endif
