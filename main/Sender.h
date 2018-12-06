@@ -68,7 +68,7 @@ public:
         ESP_LOGI("CircularBuffer", "BYTES FREE MALLOC_CAP_DEFAULT: %d", free_size_bytes);
         ESP_LOGI("CircularBuffer", "BYTES FREE MALLOC_CAP_8BIT: %d", heap_caps_get_minimum_free_size(MALLOC_CAP_8BIT));
         ESP_LOGI("CircularBuffer", "BYTES FREE MALLOC_CAP_32BIT: %d", heap_caps_get_minimum_free_size(MALLOC_CAP_32BIT));
-        int max_elem_size = sizeof(T); //considerare stringhe!!
+        int max_elem_size = sizeof(T);
         ESP_LOGI("CircularBuffer", "SIZE OF TYPE: %d", max_elem_size);
 
         if(free_size_bytes < bytes_to_leave){

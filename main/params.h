@@ -9,7 +9,7 @@
     #define PARAMS_H_
 
     #define DEVICE_NAME "ESP0" 
-    #define CONF_CHOSEN -1
+    #define CONF_CHOSEN 3
 
     #if CONF_CHOSEN==-1
         #define WIFI_SSID "J8YYtd3"
@@ -32,5 +32,8 @@
         #define WIFI_PASS "gianluca"
         #define SERVER_IP "192.168.43.33"
     #elif CONF_CHOSEN==3
+        #define WIFI_SSID "Giorgio"
+        #define WIFI_PASS "giorgiopizzuto"
+        #define SERVER_IP "192.168.43.211"
     #endif
 #endif
