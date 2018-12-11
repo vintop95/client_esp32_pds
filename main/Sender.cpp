@@ -12,12 +12,12 @@
 static const char* LOG_TAG = "Sender";
 
 /**
- * @brief Prototype of callback defined at the end of the file
+ * Prototype of callback defined at the end of the file
  */
 void callback(FreeRTOSTimer *pTimer);
 
 /**
- * @brief Sender constructor
+ * Sender constructor
  */
 Sender::Sender(Server* srv, int ms): msListenPeriod(ms), 
     timer((char*)"listenTimer", pdMS_TO_TICKS(msListenPeriod),
@@ -33,7 +33,7 @@ Sender::Sender(Server* srv, int ms): msListenPeriod(ms),
 }
 
 /**
- * @brief Called by json object to convert Record object in json
+ * Called by json object to convert Record object in json
  * 
  * @param Reference of json element
  * @param Const ref to the Record to convert
@@ -87,14 +87,14 @@ bool Sender::sendRecordsToServer(){
             ESP_LOGE(LOG_TAG, "Trying to pop a null element");
         }
         recordsAreSent = server->send_records(j);
-        records.clear();
+        records.reset();
     }
 
     return recordsAreSent;
 }
 
 /**
- * @brief Push back record object in the vector of records
+ * Push back record object in the vector of records
  * 
  * @param Record to push
  * 
@@ -105,14 +105,14 @@ void Sender::push_back(const Record& r){
 }
 
 /**
- * @brief Starts the timer for sending periodically the records.
+ * Starts the timer for sending periodically the records.
  */
 void Sender::startSendingTimer(){
 	timer.start();
 }
 
 /**
- * @brief Callback called by the Timer.
+ * Callback called by the Timer.
  *
  * @param Pointer to the Timer Object
  * 

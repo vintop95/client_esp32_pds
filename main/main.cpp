@@ -31,7 +31,7 @@ static const char *LOG_TAG = "main";
 RTC_DATA_ATTR static int boot_count = 0;
 
 /**
- * @brief Utility function that gives a string of the mac passed
+ * Utility function that gives a string of the mac passed
  * 
  * @param Array of 8 bit integers representing the mac address
  * @param String representing the mac address to return

@@ -38,6 +38,7 @@
 #include <exception>
 
 #include "WiFi.h"
+#include "Task.h"
 #include "FreeRTOSTimer.h"
 #include "json.hpp"
 

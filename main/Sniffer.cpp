@@ -11,14 +11,14 @@ static const char* LOG_TAG = "Sniffer";
 void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type);
 
 /**
- * @brief Pointer to a Sender defined out here in order
- * to use it in callbacks, defining it in the Sniffer class
- * make it impossible to be called by the callback
+ * Pointer to a Sender defined out here in order to use it in callbacks.
+ * If i had designed it in the Sniffer class it would make impossible 
+ * to call it from the callback
  */
 Sender* pSender;
 
 /**
- * @brief Sniffer constructor
+ * Sniffer constructor
  * 
  * @param Sender object used by the sniffer to send Records
  * 
@@ -35,7 +35,7 @@ Sniffer::~Sniffer()
 }
 
 /**
- * @brief Initialize the Sniffer, enabling promiscuous mode
+ * Initialize the Sniffer, enabling promiscuous mode
  * and setting the callback
  * 
  * @return N/A.
@@ -49,7 +49,7 @@ void Sniffer::init(){
 }
 
 /**
- * @brief Deinitialize the Sniffer, 
+ * Deinitialize the Sniffer, 
  * disabling the promiscous mode and unsetting the callback
  * 
  * @return N/A.
@@ -61,7 +61,7 @@ void Sniffer::stop(){
 }
 
 /**
- * @brief Utility function that gives a string of the packet type
+ * Utility function that gives a string of the packet type
  * 
  * @param Type of the packet received
  * @param Subtype of the management packet received
@@ -117,7 +117,7 @@ const char* wifi_pkt_type2str(wifi_promiscuous_pkt_type_t type, wifi_mgmt_subtyp
 }
 
 /**
- * @brief Called by json object to convert Record object in json
+ * Called by json object to convert Record object in json
  * 
  * @param Reference of json element
  * @param Const ref to the Record to convert
@@ -147,7 +147,7 @@ void printf_date(time_t timestamp){
 }
 
 /**
- * @brief Callback that handles the sniffed packet
+ * Callback that handles the sniffed packet
  * It must push back to the list of records the following fields:
  * - l’indirizzo MAC del mittente
  * - l’SSID richiesto(se presente)
@@ -317,7 +317,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 }
 
 /**
- * @brief NECESSARY BUSY WAITING FUNCTION
+ * NECESSARY BUSY WAITING FUNCTION
  * 
  * Originally it looped the wifi channels.
  * The assignment says to listen to just one channel, but listen

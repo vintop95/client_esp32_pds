@@ -54,7 +54,7 @@ Socket::~Socket() {
 
 
 /**
- * @brief Accept a new socket.
+ * Accept a new socket.
  */
 Socket Socket::accept() {
 	struct sockaddr addr;
@@ -87,7 +87,7 @@ Socket Socket::accept() {
 
 
 /**
- * @brief Convert a socket address to a string representation.
+ * Convert a socket address to a string representation.
  * @param [in] addr The address to parse.
  * @return A string representation of the address.
  */
@@ -102,7 +102,7 @@ std::string Socket::addressToString(struct sockaddr* addr) {
 
 
 /**
- * @brief Bind an address/port to a socket.
+ * Bind an address/port to a socket.
  * Specify a port of 0 to have a local port allocated.
  * Specify an address of INADDR_ANY to use the local server IP.
  * @param [in] port Port number to bind.
@@ -130,7 +130,7 @@ int Socket::bind(uint16_t port, uint32_t address) {
 
 
 /**
- * @brief Close the socket.
+ * Close the socket.
  *
  * @return Returns 0 on success.
  */
@@ -157,7 +157,7 @@ int Socket::close() {
 
 
 /**
- * @brief Connect to a partner.
+ * Connect to a partner.
  *
  * @param [in] address The IP address of the partner.
  * @param [in] port The port number of the partner.
@@ -185,7 +185,7 @@ int Socket::connect(struct in_addr address, uint16_t port) {
 
 
 /**
- * @brief Connect to a partner.
+ * Connect to a partner.
  *
  * @param [in] strAddress The string representation of the IP address of the partner.
  * @param [in] port The port number of the partner.
@@ -199,7 +199,7 @@ int Socket::connect(char* strAddress, uint16_t port) {
 
 
 /**
- * @brief Create the socket.
+ * Create the socket.
  * @param [in] isDatagram Set to true to create a datagram socket.  Default is false.
  * @return The socket descriptor.
  */
@@ -221,7 +221,7 @@ int Socket::createSocket(bool isDatagram) {
 
 
 /**
- * @brief Get the bound address.
+ * Get the bound address.
  * @param [out] pAddr The storage to hold the address.
  * @return N/A.
  */
@@ -238,7 +238,7 @@ void Socket::getBind(struct sockaddr* pAddr) {
 
 
 /**
- * @brief Get the underlying socket file descriptor.
+ * Get the underlying socket file descriptor.
  * @return The underlying socket file descriptor.
  */
 int Socket::getFD() const {
@@ -254,7 +254,7 @@ bool Socket::isValid() {
 } // isValid
 
 /**
- * @brief Create a listening socket.
+ * Create a listening socket.
  * @param [in] port The port number to listen upon.
  * @param [in] isDatagram True if we are listening on a datagram.  The default is false.
  * @return Returns 0 on success.
@@ -288,7 +288,7 @@ bool Socket::operator <(const Socket& other) const {
 
 
 /**
- * @brief Set the socket option.
+ * Set the socket option.
  */
 int Socket::setSocketOption(int option, void* value, size_t len)
 {
@@ -301,7 +301,7 @@ int Socket::setSocketOption(int option, void* value, size_t len)
 
 
 /**
- * @brief Socket timeout.
+ * Socket timeout.
  * @param [in] seconds to wait.
  */
 int Socket::setTimeout(uint32_t seconds)
@@ -349,7 +349,7 @@ std::string Socket::readToDelim(std::string delim) {
 
 
 /**
- * @brief Receive data from the partner.
+ * Receive data from the partner.
  * Receive data from the socket partner.  If exact = false, we read as much data as
  * is available without blocking up to length.  If exact = true, we will block until
  * we have received exactly length bytes or there are no more bytes to read.
@@ -405,7 +405,7 @@ size_t Socket::receive(uint8_t* data, size_t length, bool exact) {
 
 
 /**
- * @brief Receive data with the address.
+ * Receive data with the address.
  * @param [in] data The location where to store the data.
  * @param [in] length The size of the data buffer into which we can receive data.
  * @param [in] pAddr An area into which we can store the address of the partner.
@@ -419,7 +419,7 @@ int Socket::receiveFrom(uint8_t* data, size_t length,	struct sockaddr *pAddr) {
 
 
 /**
- * @brief Send data to the partner.
+ * Send data to the partner.
  *
  * @param [in] data The buffer containing the data to send.
  * @param [in] length The length of data to be sent.
@@ -464,7 +464,7 @@ int Socket::send(const uint8_t* data, size_t length) const {
 
 
 /**
- * @brief Send a string to the partner.
+ * Send a string to the partner.
  *
  * @param [in] value The string to send to the partner.
  * @return N/A.
@@ -488,7 +488,7 @@ int  Socket::send(uint32_t value) {
 
 
 /**
- * @brief Send data to a specific address.
+ * Send data to a specific address.
  * @param [in] data The data to send.
  * @param [in] length The length of the data to send/
  * @param [in] pAddr The address to send the data.
@@ -507,7 +507,7 @@ void Socket::sendTo(const uint8_t* data, size_t length, struct sockaddr* pAddr) 
 
 
 /**
- * @brief Flag the socket address as re-usable.
+ * Flag the socket address as re-usable.
  * @param [in] value True to mark the address as re-usable, false otherwise.
  */
 void Socket::setReuseAddress(bool value) {
@@ -519,7 +519,7 @@ void Socket::setReuseAddress(bool value) {
 
 
 /**
- * @brief Flag the socket as using SSL
+ * Flag the socket as using SSL
  * @param [in] sslValue True if we wish to use SSL.
  */
 void Socket::setSSL(bool sslValue) {
@@ -611,7 +611,7 @@ void Socket::setSSL(bool sslValue) {
 
 
 /**
- * @brief perform the SSL handshake
+ * perform the SSL handshake
  */
 void Socket::sslHandshake() {
 	ESP_LOGD(LOG_TAG, ">> sslHandshake: sock: %d", m_sslSock.fd);
@@ -635,7 +635,7 @@ void Socket::sslHandshake() {
 
 
 /**
- * @brief Get the string representation of this socket
+ * Get the string representation of this socket
  * @return the string representation of the socket.
  */
 std::string Socket::toString() {
@@ -646,7 +646,7 @@ std::string Socket::toString() {
 
 
 /**
- * @brief Create a socket input record streambuf
+ * Create a socket input record streambuf
  * @param [in] socket The socket we will be reading from.
  * @param [in] dataLength The size of a record.
  * @param [in] bufferSize The size of the buffer we wish to allocate to hold data.
@@ -671,7 +671,7 @@ SocketInputRecordStreambuf::~SocketInputRecordStreambuf() {
 
 
 /**
- * @brief Handle the request to read data from the stream but we need more data from the source.
+ * Handle the request to read data from the stream but we need more data from the source.
  *
  */
 SocketInputRecordStreambuf::int_type SocketInputRecordStreambuf::underflow() {
