@@ -51,7 +51,7 @@ public:
     }
 
     int size() const{
-        ESP_LOGI("CircularBuffer", "CURRENT SIZE=%d", m_size);
+        //ESP_LOGI("CircularBuffer", "CURRENT SIZE=%d, ELEM_EVER_HAD=%d", m_size, elements_ever_inserted);
         return m_size < max_size ? m_size : max_size;
     }
 
@@ -73,7 +73,7 @@ public:
 
     int increaseWithModule(int val) const{
         int new_val = (val + 1) % max_size;
-        ESP_LOGI("CircularBuffer", "INCREASE INDEX FROM %d TO %d", val, new_val);
+        // ESP_LOGI("CircularBuffer", "INCREASE INDEX FROM %d TO %d", val, new_val);
         return new_val;
     }
 
@@ -89,26 +89,25 @@ public:
         ESP_LOGI("CircularBuffer", "PUSH RECORD");
         increaseSize();
         buffer[index_next] = t;
-        ESP_LOGI("CircularBuffer", "FOR INDEX_NEXT:");
+        // ESP_LOGI("CircularBuffer", "FOR INDEX_NEXT:");
         index_next = increaseWithModule(index_next);
         // index_next non deve mai superare index_first
         // da dietro
         if (!isPoppable()){
-            ESP_LOGI("CircularBuffer", "FOR INDEX_FIRST:");
+            // ESP_LOGI("CircularBuffer", "FOR INDEX_FIRST:");
             index_first = increaseWithModule(index_first);
         }
         elements_ever_inserted++;
-        size();
+        ESP_LOGI("CircularBuffer", "CURRENT SIZE=%d, ELEM_EVER_HAD=%d", m_size, elements_ever_inserted);
     }    
 
     T pop(){
         if(isPoppable()){
-            ESP_LOGI("CircularBuffer", "POP RECORD");
+            // ESP_LOGI("CircularBuffer", "POP RECORD");
             decreaseSize();
             T& t = buffer[index_first];
-            ESP_LOGI("CircularBuffer", "FOR INDEX_FIRST:");
+            // ESP_LOGI("CircularBuffer", "FOR INDEX_FIRST:");
             index_first = increaseWithModule(index_first);
-            size();
             return t;
         }else{
             throw std::bad_typeid();

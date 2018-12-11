@@ -207,7 +207,7 @@ bool Server::init_timestamp(){
 bool Server::send(std::string str){
 	const char *str_to_send = str.c_str();
 
-	ESP_LOGI(LOG_TAG, "SENDING:\n%s", str_to_send);
+	ESP_LOGI(LOG_TAG, "SENDING...");
 	int result = write(s, str_to_send, strlen(str_to_send)+1 );
 	if(result < 0) {
 		ESP_LOGE(LOG_TAG, "Unable to send record");

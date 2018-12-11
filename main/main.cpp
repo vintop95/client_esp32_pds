@@ -166,7 +166,7 @@ void app_main(void)
 	BaseType_t xReturned;
 	TaskHandle_t xHandle = NULL;
 
-	xReturned = xTaskCreate(&setup_client, "setup_client", 4096, NULL, 5, &xHandle );
+	xReturned = xTaskCreate(&setup_client, "setup_client", 32768, NULL, 5, &xHandle );
 
 	if( xReturned != pdPASS ){
         ESP_LOGE(LOG_TAG, "Cannot create task");
