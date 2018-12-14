@@ -9,7 +9,7 @@
 
 ## Configurazione ambiente di sviluppo
 * **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
-* **DOWNLOAD MSYS2 GIÀ PRONTO**: https://ufile.io/q8zab  
+* **DOWNLOAD MSYS2 GIÀ PRONTO**:
 MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC  
 	- Copiare la cartella in ```C:```
 	- Avviare ```mingw32.exe``` la prima volta e modificare in ```C:\msys32\home``` la cartella "vince" con il nome della cartella utente appena generata
@@ -25,7 +25,6 @@ MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC
   * https://www.youtube.com/watch?v=VPgEc8FUiqI
   * ERRORE INCLUSIONE INTELLISENSE: https://github.com/Microsoft/vscode-cpptools/issues/743  
   	AGGIUNGERE RIGA ``` "C_Cpp.intelliSenseEngine": "Tag Parser" ``` A USER SETTINGS
-  	
 
 ### Configurazione Client
 - ```make menuconfig``` e:
@@ -62,6 +61,32 @@ https://stackoverflow.com/questions/52077195/msys2-installing-a-python-package-f
 ***ERROR*** A stack overflow in task Tmr Svc has been detected.  
 https://www.esp32.com/viewtopic.php?t=1459
 
+## Documentazioni
+* **DOCUMENTAZIONI**:
+  * ESP-IDF: https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/wifi/esp_wifi.html
+  * ESP-wifi.h: https://github.com/espressif/esp-idf/blob/17ac4ba/components/esp32/include/esp_wifi.h
+* **TEORIA STRUTTURA PKTS**:  
+  * ESP_PROMISCOUS_HEADER_PKT: https://github.com/espressif/esp-idf/issues/1751
+  * STRUTTURA_PKT_probe_req: https://mrncciew.com/2014/10/27/cwap-802-11-probe-requestresponse/
+  * 802.11_FRAME_FORMAT: https://mrncciew.com/2013/04/24/802-11-frame-format/
+  * 802.11_HEADER_SEQ_NUM: https://mrncciew.com/2014/11/01/cwap-mac-header-sequence-control/
+  * 802.11_FRAMING_IN_DETAIL: http://osnet.cs.nchu.edu.tw/powpoint/seminar/802.11/802.11Framing%20in%20Detail.pdf
+  * 802.11_MAC_FRAME_FORMAT_2: https://witestlab.poly.edu/blog/802-11-wireless-lan-2/
+* **WIFI SNIFFER DEMOs**:
+  * ESP_sniffer_DEMO: https://github.com/lpodkalicki/blog/blob/master/esp32/016_wifi_sniffer/main/main.c
+  * ESP_SNIFFER_WITH_STRUCTURES: https://www.carvesystems.com/blog/advanced-esp-part-one-simple-sniffer/
+  * ESP_SNIFFER_WITH_STRUCTURES_2: http://blog.podkalicki.com/esp32-wifi-sniffer/
+  * ESP_LUCADENTELLA_DEMOs: https://github.com/lucadentella/esp32-tutorial
+* **DOCUMENTAZIONI LIBRERIE AGGIUNTIVE**:
+  * ESP_C++_LIBRARIES: https://github.com/nkolban/esp32-snippets/tree/master/cpp_utils
+  * JSON_NLOHMANN: https://github.com/nlohmann/json
+  * JSON_NLOHMANN_ARRAY: https://nlohmann.github.io/json/classnlohmann_1_1basic__json_aa80485befaffcadaa39965494e0b4d2e.html#aa80485befaffcadaa39965494e0b4d2e
+* **TUTORIALS 4 DUMMIES**:  
+  * HELLO_WORLD_ESP32_EXPLAINED: https://exploreembedded.com/wiki/Hello_World_with_ESP32_Explained
+  * USE_MEMBER_FUNCS_WITH_CALLBACKS: https://www.codeproject.com/Articles/4817/How-to-use-SetTimer-with-callback-to-a-non-static
+  * UNIX_CLIENT_WITH_SELECT: https://gist.github.com/Alexey-N-Chernyshov/4634731
+  * UNIX_CLIENT_2: https://www.binarytides.com/code-a-simple-socket-client-class-in-c/
+  
 ## Errori di incompatibilità da C a C++
 Inizializzazione di strutture:
 ```wifi_config_t sta_config={.sta={.ssid="foo",.password="bar, (...) }};```
@@ -176,13 +201,6 @@ File contenente le definizioni dei "task" offerti da Visual Studio Code per la v
 ```sdkconfig```  
 File contenente i parametri di configurazione impostabili con ```make menuconfig```
 EDIT: rimosso poiché contiene configurazioni locali, lasciata una copia
-
-## DA FARE
-- SNTP (sincronizzazione timestamp): https://github.com/espressif/esp-idf/blob/master/examples/protocols/sntp/README.md  
-- struttura esterna pacchetti spiegata: https://github.com/espressif/esp-idf/issues/1751  
-- PROBLEMA RICONESSIONE DOPO AVER STACCATO WIFI:  
-E (52291) FreeRTOS: Semaphore NOT taken:  name: ConnectFinished (0x3ffbeea8), owner: connectAP  
-D (52291) WiFi: esp_wifi_connect  
 
 
 # Ulteriori informazioni
