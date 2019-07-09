@@ -7,6 +7,15 @@
 
 **Server ESP32**: https://github.com/vintop95/server_esp32_pds
 
+### PRIMA DI TUTTO Errori noti
+Problemi con l'installazione di python:  
+https://stackoverflow.com/questions/52077195/msys2-installing-a-python-package-fails
+
+***ERROR*** A stack overflow in task Tmr Svc has been detected.  
+STACK OVERFLOW quando tenti di inviare i pacchetti: risolvere raddoppiando  
+```CONFIG_FREERTOS_TIMER_TASK_STACK_DEPTH``` da 2048 a 4096  
+https://www.esp32.com/viewtopic.php?t=1459
+
 ## Configurazione ambiente di sviluppo
 * **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
 SCARICARE I DRIVER DALLA CARTELLA /docs SULLA REPO  
@@ -56,13 +65,6 @@ client:
 2a. (opzionale) ```make menuconfig```
 3. ```make flash``` (oppure ```make app``` per compilare e non flashare)  
 4. ```make monitor``` (oppure usare PuTTy)
-
-### Errori noti
-Problemi con l'installazione di python:  
-https://stackoverflow.com/questions/52077195/msys2-installing-a-python-package-fails
-
-***ERROR*** A stack overflow in task Tmr Svc has been detected.  
-https://www.esp32.com/viewtopic.php?t=1459
 
 ## Documentazioni
 * **DOCUMENTAZIONI**:
