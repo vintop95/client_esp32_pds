@@ -31,7 +31,7 @@ MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC
 - ```make menuconfig``` e:
 	- modificare interfaccia USB della scheda
 	- Attivare gestione errori c++
-	- Personalizzare i parametri dell'app (WiFi - Server Connection Configuration)  
+	- Personalizzare i parametri dell'app NON DA ```make menuconfig``` ma modificando ```params.h```
 - Per convenzione la porta di ascolto del server è 7856
 
 ### Configurazione Server
