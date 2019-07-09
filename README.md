@@ -9,6 +9,7 @@
 
 ## Configurazione ambiente di sviluppo
 * **Driver**: CP210x_Universal_Windows_Driver.rar contiene i driver necessari per la corretta configurazione della interfaccia di comunicazione tra esp32 e Windows (la mia interfaccia risulta essere COM3)  
+SCARICARE I DRIVER DALLA CARTELLA /docs SULLA REPO  
 * **DOWNLOAD MSYS2 GIÀ PRONTO**:
 MIRROR: https://drive.google.com/open?id=1UU9dDYHE2jzBabEiHU_E01pJDBBQCeXC  
 	- Copiare la cartella in ```C:```
