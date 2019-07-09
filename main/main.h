@@ -19,6 +19,7 @@
 #include "esp_wifi_types.h"
 #include "esp_system.h"
 #include "esp_event.h"
+#include "esp_sleep.h"
 #include "esp_event_loop.h"
 
 #include "lwip/netdb.h"
@@ -26,7 +27,7 @@
 
 #include "driver/gpio.h"
 
-#include <hwcrypto/sha.h>
+#include <esp32/sha.h>
 #include <mbedtls/base64.h>
 #include <sys/time.h>
 
