@@ -27,7 +27,7 @@
 
 #include "driver/gpio.h"
 
-#include <esp32/sha.h>
+#include <hwcrypto/sha.h>
 #include <mbedtls/base64.h>
 #include <sys/time.h>
 
