@@ -272,8 +272,15 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     // perché non mi convince il contenuto, proviamo innanzitutto a vedere se 
     // due board riescono a sniffare lo stesso pacchetto (con stesso hash), se sì
     // vediamo di estendere l'hash all'intero pacchetto.
-    uint8_t shaData[pkt_size];
-    esp_sha(SHA1, ipkt->payload, pkt_size, shaData); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
+
+    // Salviamo in una stringa 'inputData' 
+    // le informazioni che usiamo per fare l'hash
+    int stringToHashSize = 5+17+1;
+    char inputData[stringToHashSize];
+    sprintf(inputData, "%d%s", hdr->sequence_ctrl, addr2);
+
+    uint8_t shaData[20]; //dimensione fissa di output di 20B
+    esp_sha(SHA1, (uint8_t*) inputData, stringToHashSize, shaData); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
     unsigned char shaBase64[100];
     size_t outputLen;
     mbedtls_base64_encode(shaBase64, 100, (size_t*)&outputLen, (const unsigned char*)shaData, (size_t)20 );
