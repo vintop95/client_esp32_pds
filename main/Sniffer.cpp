@@ -262,6 +262,7 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     }
     printf("\n");
 
+
     // 5) hashed_pkt - USE A HASH FUNCTION IN ORDER TO HAVE A STRING TO PUT IN hashed_pkt
     esp_sha(SHA1, (const unsigned char*)ieee80211_pkt_binary, 24, r.hashed_pkt); //"ipkt->payload, pkt_size" al posto di "(const unsigned char*)ieee80211_pkt_binary, 24"
 
@@ -270,6 +271,14 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
 
     //aggiungi il record alla lista di record da inviare
     pSender->push_back(r);
+
+    // PER STAMPARE HASH IN BASE64
+    //uint8_t shaData[20]; //dimensione fissa di output di 20B
+    //unsigned char shaBase64[100];
+    //size_t outputLen;
+    //mbedtls_base64_encode(shaBase64, 100, (size_t*)&outputLen, (const unsigned char*)shaData, (size_t)20 );
+    //std::string str((const char *)shaBase64);
+    //r.hashed_pkt = str;
 
     ///// stampa il pkt ricevuto
     printf_date(r.timestamp);
