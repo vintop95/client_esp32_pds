@@ -305,10 +305,10 @@ void wifi_sniffer_packet_handler(void* buff, wifi_promiscuous_pkt_type_t type)
     printf("%s", r.ssid);
     printf("\033[0m");
 
-    // printf("\", HASH=\"");
-    // printf("\033[1;32m");
-    // printf("%s", r.hashed_pkt);
-    // printf("\033[0m");
+    printf("\", HASH=\"");
+    printf("\033[1;32m");
+    printf("%s", r.hashed_pkt);
+    printf("\033[0m");
 
     printf("\"\n");
     /////

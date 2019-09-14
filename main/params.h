@@ -8,8 +8,8 @@
 #ifndef PARAMS_H_
     #define PARAMS_H_
 
-    #define DEVICE_NAME "ESP0" 
-    #define CONF_CHOSEN 5
+    #define DEVICE_NAME "ESP2" 
+    #define CONF_CHOSEN -1
 
     #if CONF_CHOSEN==-1
         #define WIFI_SSID "J8YYtd3"
