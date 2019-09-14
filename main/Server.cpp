@@ -122,35 +122,97 @@ bool Server::connect(){
 }
 
 /**
+ * Called by json object to convert Record object in json
+ * 
+ * @param Reference of json element
+ * @param Const ref to the Record to convert
+ * 
+ * @return N/A.
+ */
+void to_json(json& j, const Record& r) {
+    // ESP_LOGI(LOG_TAG, "START JSON TRANSFORMATION");
+
+    char j_sender_mac[] = "00:00:00:00:00:00";
+    mac2str(r.sender_mac, j_sender_mac);
+    // ESP_LOGI(LOG_TAG, "j_sender_mac: %s", j_sender_mac);
+
+    const int sizeStringSha = 30+1;
+    unsigned char j_hashed_pkt[sizeStringSha];
+    size_t outputLen;
+    mbedtls_base64_encode(j_hashed_pkt, sizeStringSha, (size_t*)&outputLen, (const unsigned char*)r.hashed_pkt, (size_t)20 );
+    // ESP_LOGI(LOG_TAG, "j_hashed_pkt: %s", j_hashed_pkt);
+
+    j = json{
+                {"sender_mac", std::string((const char *)j_sender_mac)},
+                {"timestamp", r.timestamp},
+                {"rssi", r.rssi}, 
+                {"hashed_pkt", std::string((const char *)j_hashed_pkt, outputLen)}, 
+                {"seq_num", r.seq_num}, 
+                {"ssid", std::string((const char *)r.ssid)}
+            };
+}
+
+/**
  * Send records in the json object to the server
  * with the SCILP protocol 
  * [Sniffer Communication for Indoor Localization Protocol]
  * 
  * @return true if all went well, false otherwise
  */
-bool Server::send_records(json j){
+bool Server::send_records(CircularBuffer<Record>& records){
 
-	bool isConnected = this->connect();
-	if (!isConnected){
-		return false;
+	bool recordsAreSent = false;
+
+	int recordsSize = records.size();
+    if(recordsSize != 0){
+        ESP_LOGI(LOG_TAG, "SENDING %d ACCUMULATED RECORDS TO SERVER", recordsSize);
+        json j;
+
+		bool isConnected = this->connect();
+		if (!isConnected){
+			return false;
+		}
+		gpio_set_level(BLINK_GPIO, 0);
+
+		
+		this->send("DATA [");
+
+        while(records.isPoppable()) {
+            try{
+                while(records.isPoppable() && j.size() <= 20){
+                    j.push_back(records.pop());
+                }
+            }catch(std::bad_typeid& e){
+                ESP_LOGE(LOG_TAG, "Trying to pop a null element");
+            }
+
+			string str = j.dump();
+			str.erase(0, 1);
+			if (records.isPoppable()){
+				str.pop_back();
+				recordsAreSent = this->send(str + ",");
+			} else {
+				recordsAreSent = this->send(str);
+			}
+            
+            j.clear();
+        }
+
+		bool ackOK = this->wait_ack();
+		if (!ackOK){
+			return false;
+		}
+
+		uint32_t timestamp;
+		this->send_end();
+		recordsAreSent = this->wait_ack(&timestamp);
+
+		this->close();
+
+		gpio_set_level(BLINK_GPIO, 1);
+
+		records.reset();
 	}
-
-	gpio_set_level(BLINK_GPIO, 0);
-
-	this->send_data(j);
-
-	bool ackOK = this->wait_ack();
-	if (!ackOK){
-		return false;
-	}
-
-	uint32_t timestamp;
-	this->send_end();
-	bool recordsAreSent = this->wait_ack(&timestamp);
-
-	this->close();
-
-	gpio_set_level(BLINK_GPIO, 1);
 
 	return recordsAreSent;
 }

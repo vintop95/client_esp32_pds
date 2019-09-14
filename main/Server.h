@@ -9,6 +9,8 @@
 #define SERVER_H_
 
 #include "main.h"
+#include "CircularBuffer.h"
+#include "Record.h"
 
 /**
  * Gestisce l'interfaccia di comunicazione con il server che ha il compito di
@@ -58,7 +60,7 @@ public:
     bool wifi_connect();
 
     bool init_timestamp();
-    bool send_records(json j);
+    bool send_records(CircularBuffer<Record>&);
 };
 
 #endif 
