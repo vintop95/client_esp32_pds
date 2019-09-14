@@ -11,3 +11,5 @@ sdkconfig.old
 
 main/params.h
 *.old
+
+params.h

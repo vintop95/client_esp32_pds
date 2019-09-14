@@ -64,7 +64,7 @@ bool Server::wifi_connect(){
 
 
 /**
- * @brief It connects to the server
+ * It connects to the server
  * 
  * @return true if all went well, false otherwise
  */
@@ -122,7 +122,7 @@ bool Server::connect(){
 }
 
 /**
- * @brief Send records in the json object to the server
+ * Send records in the json object to the server
  * with the SCILP protocol 
  * [Sniffer Communication for Indoor Localization Protocol]
  * 
@@ -156,7 +156,7 @@ bool Server::send_records(json j){
 }
 
 /**
- * @brief Initialize timestamp during the boot phase
+ * Initialize timestamp during the boot phase
  * 
  * @return true if all went well, false otherwise
  */
@@ -198,7 +198,7 @@ bool Server::init_timestamp(){
 }
 
 /**
- * @brief It sends a std::string to the server
+ * It sends a std::string to the server
  * 
  * @param String to send
  * 
@@ -207,7 +207,7 @@ bool Server::init_timestamp(){
 bool Server::send(std::string str){
 	const char *str_to_send = str.c_str();
 
-	ESP_LOGI(LOG_TAG, "SENDING:\n%s", str_to_send);
+	ESP_LOGI(LOG_TAG, "SENDING...");
 	int result = write(s, str_to_send, strlen(str_to_send)+1 );
 	if(result < 0) {
 		ESP_LOGE(LOG_TAG, "Unable to send record");
@@ -220,7 +220,7 @@ bool Server::send(std::string str){
 }
 
 /**
- * @brief It sends a INIT message to the server
+ * It sends a INIT message to the server
  * 
  * @param Json to send
  * 
@@ -231,7 +231,7 @@ bool Server::send_init(json j){
 }
 
 /**
- * @brief It sends a DATA message to the server
+ * It sends a DATA message to the server
  * 
  * @param Json to send
  * 
@@ -242,7 +242,7 @@ bool Server::send_data(json j){
 }
 
 /**
- * @brief It sends a END message to the server
+ * It sends a END message to the server
  * 
  * @return 0 true if all went well, false otherwise
  */
@@ -261,7 +261,7 @@ void print_date(time_t timestamp){
 }
 
 /**
- * @brief It waits the ack from the server
+ * It waits the ack from the server
  * - OK [timestamp]: all went well
  * - ERR: some error occurred
  * 
@@ -328,7 +328,7 @@ bool Server::wait_ack(uint32_t* time_ptr){
 }
 
 /**
- * @brief Close the socket with the server
+ * Close the socket with the server
  */
 void Server::close(){
     ::close(s);

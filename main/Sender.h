@@ -11,29 +11,21 @@
 #include "main.h"
 
 #include "Server.h"
-#include "Task.h"
+#include "Record.h"
+#include "CircularBuffer.h"
+
+#include <esp_heap_caps.h>
+
 
 /**
- * @brief Struttura che raccoglie le 
- * informazioni dei pacchetti ascoltati necessari per l'elaborazione
- */
-struct Record{
-    std::string sender_mac;
-    uint32_t timestamp;
-    int8_t rssi;
-    std::string hashed_pkt;
-    std::string ssid;
-};
-
-/**
- * @brief Gestisce la raccolta e l'invio dei Record usando l'interfaccia
- *  offerta da Server
+ * Gestisce la raccolta e l'invio dei Record usando l'interfaccia
+ * offerta da Server
  */
 class Sender {
 private:
     //Period of time in which ESP32 sniffs packets expressed in milliseconds
     int msListenPeriod;
-    std::vector<Record> records;
+    CircularBuffer<Record> records;
     FreeRTOSTimer timer;
 
     bool sendRecordsToServer();
@@ -43,7 +35,7 @@ public:
     Server* server;
     Sender(Server* srv, int ms);
 
-    void push_back(Record r);
+    void push_back(const Record& r);
     void startSendingTimer();
 };
 

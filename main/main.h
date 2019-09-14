@@ -19,6 +19,7 @@
 #include "esp_wifi_types.h"
 #include "esp_system.h"
 #include "esp_event.h"
+#include "esp_sleep.h"
 #include "esp_event_loop.h"
 
 #include "lwip/netdb.h"
@@ -26,13 +27,19 @@
 
 #include "driver/gpio.h"
 
+#include <hwcrypto/sha.h>
+#include <mbedtls/base64.h>
+#include <sys/time.h>
+
 #include <iostream>
 #include <string>
 #include <string.h>
 #include <vector>
 #include <memory>
+#include <exception>
 
 #include "WiFi.h"
+#include "Task.h"
 #include "FreeRTOSTimer.h"
 #include "json.hpp"
 
@@ -62,5 +69,6 @@ extern WiFi* pWifi;
 extern volatile int IS_WIFI_CONNECTED;
 
 void led_blink(void *pvParameter);
+void mac2str(const uint8_t* ptr, char* string);
 
 #endif
